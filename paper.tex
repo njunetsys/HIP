@@ -1,0 +1,110 @@
+
+\documentclass[letterpaper,twocolumn,10pt]{article}
+\usepackage{usenix2019_v3}
+
+% to be able to draw some self-contained figs 
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{pifont}
+\usepackage{float}
+\usepackage{makecell}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{amssymb}
+\usepackage{subfigure}
+\usepackage{textcomp}
+\usepackage{enumitem}
+\usepackage{enumerate}
+\usepackage{ulem}
+\usepackage{tabularx}
+\usepackage{cellspace}
+\usepackage{algorithm,algorithmic}
+\usepackage{svg}
+\usepackage{diagbox}
+\setlist{leftmargin=*}
+%% remove underline
+\usepackage{ulem}
+\normalem
+\usepackage{filecontents}
+
+\usepackage{xurl}
+\def\UrlBreaks{%
+  \do\/%
+  \do\a\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j\do\k\do\l%
+     \do\m\do\n\do\o\do\p\do\q\do\r\do\s\do\t\do\u\do\v\do\w\do\x\do\y\do\z%
+  \do\A\do\B\do\C\do\D\do\E\do\F\do\G\do\H\do\I\do\J\do\K\do\L%
+     \do\M\do\N\do\O\do\P\do\Q\do\R\do\S\do\T\do\U\do\V\do\W\do\X\do\Y\do\Z%
+  \do0\do1\do2\do3\do4\do5\do6\do7\do8\do9\do=\do/\do.\do:%
+  \do\*\do\-\do\~\do\'\do\"\do\-}
+\Urlmuskip=0mu plus 0.1mu
+%\titlespacing*{\subsection}{0pt}{1.6ex plus .2ex}{1.6ex plus .2ex}
+%\titlespacing*{\subsection}{0pt}{1ex}{0ex}
+%\titlespacing*{\subsubsection}{0pt}{1ex}{0.2ex}
+%\titlespacing{\section}{0pt}{1ex}{0.4ex}
+
+%--------------------------------------%
+\newcommand{\sys}{EdgeCross} % \xspace
+\newcommand{\egress}{peering link} 
+\newcommand{\egresses}{peering links}
+\newcommand{\Egress}{Peering link} 
+\newcommand{\Egresses}{Peering link}
+\newcommand{\EGRESS}{Peering Link}
+\newcommand{\EGRESSES}{Peering Links}
+\newcommand{\para}[1]{\vspace{6pt} \noindent \textbf{#1}}
+\newcommand{\todo}[1]{\textcolor{red}{[#1]}}
+\newcommand{\ie}{{\em i.e.}}
+\newcommand{\eg}{{\em e.g.}}
+%--------------------------------------%
+
+\usepackage{enumitem}
+\setlist[itemize]{itemsep=-0mm, leftmargin=1em}
+
+
+%-----------------------------------------------------------
+\begin{document}
+%-----------------------------------------------------------
+
+
+%don't want date printed
+\date{}
+
+% make title bold and 14 pt font (Latex default is non-bold, 16 pt)
+\title{\Large \bf \sys: Cloud Scale Traffic Management at Peering Edge}
+
+%for single author (just remove % characters)
+% \author{
+% {\rm Paper \# 312, 12 pages excluding reference}
+% copy the following lines to add more authors
+% \and
+% {\rm Name}\\
+%Name Institution
+\author{\large 
+Paper \# 26, 12 Pages + Reference
+\\
+%$^{\diamond}$Huawei, 
+%$^{\ddagger}$Nanjing University
+}
+
+\maketitle
+\pagestyle{empty}
+\input{abstract}
+\input{introduction}
+\input{background}
+\input{design}
+\input{implement}
+\input{evaluation}
+\input{related}
+\input{conclusion}
+
+%-------------------------------------------------------------------------------
+
+\newpage 
+\bibliographystyle{unsrt}
+\bibliography{reference}
+\input{appendix}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%  LocalWords:  endnotes includegraphics fread ptr nobj noindent
+%%  LocalWords:  pdflatex acks

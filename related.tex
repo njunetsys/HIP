@@ -1,0 +1,20 @@
+\section{Related Work}
+In the last decade, SDN-based traffic engineering has been widely used in cloud networks.  large cloud
+providers have deployed SDN-based centralized TE in their planetscale WANs to allocate traffic between datacenters \cite{hong2013achieving,jain2013B4,li2018trafficshaper,hong2018b4,kandula2014calendaring,laoutaris2011inter,liu2014traffic,jalaparti2016dynamicPretium,bogle2019teavar}. 
+
+Cloud providers engineer traffic
+at the edge of their networks by allocating demands on the links
+between the cloud and ISPs. Recent work has shown the role of
+engineering inter-WAN traffic for performance improvement \cite{yap2017espresso,schlinker2017edgefabric,landa2021staying} and
+cost reduction\cite{singh2021costCascara}.
+The software-defined edge routers have been widely applied to manage outbound traffic from the cloud networks. Espresso \cite{yap2017espresso} and Edge Fabric \cite{schlinker2017edgefabric,landa2021staying} employ performance-based routing. \cite{liu2016Footprint,valancius2013PECAN,zhang2010optimizingEntact,singh2021costCascara,yap2017espresso,caesar2005design,feamster2003guidelines,gupta2014sdx,schlinker2017edgefabric,krishnaswamy2023onewan,chen2015end,flavel2015fastroute,koch2023painter,markovitch2022tipsy}. TIPSY \cite{markovitch2022tipsy} and PAINTER \cite{koch2023painter} focus on ingress traffic engineering. OneWAN \cite{krishnaswamy2023onewan} recently introduced the unification management of the cloud network with a single SDN-controlled backbone. OneWAN \cite{krishnaswamy2023onewan} and \cite{chen2015end,flavel2015fastroute,zhang2010optimizingEntact} focuses on the dynamic path selection and load balancing of this traffic between the peering edge and the end host in the data center, while {\sys} focuses on the outbound inter-domain bandwidth cost and client performance together.
+
+
+Extensive research works \cite{singh2021costCascara,jalaparti2016dynamicPretium,goldenberg2004optimizing,zhang2010optimizingEntact,chen2022onlineOnTPC} have been devoted to bandwidth cost optimization. For example, OnTPC, Cascara \cite{chen2022onlineOnTPC, singh2021costCascara, goldenberg2004optimizing} address the optimization of inter-domain $95^{th}$ percentile bandwidth. {\sys} explicitly incorporates backbone constraints, employs fine-grained performance-aware flows, and places a strong emphasis on large-scale deployment optimization. Our work considers inter-datacenter capacity constraints when performing traffic engineering on the Internet. 
+
+
+% 这里 Measurement一定要加上 OneWAN
+%\noindent \textbf{Measurement.}
+%Using an SDN-like centralized control model, Footprint \cite{liu2016Footprint} jointly coordinates all routing and resources and focuses on shifting the load of long-lived stateful client sessions between channels to avoid congestion. It decides how to map users to proxies, proxies to data center(s), and traffic to WAN paths, and configures all components used for service delivery to achieve this mapping. PECAN \cite{valancius2013PECAN} studies the benefits of performing replica-to-end-user mappings in conjunction with active Internet traffic engineering. It focuses on measuring performance and choosing ingress routes. RECAN and Footprint do not focus on optimizing cost and improving latency. And Entact \cite{zhang2010optimizingEntact} directs some traffic to alternate paths to measure their performance. 
+
+
