@@ -74,18 +74,8 @@ Internet routing currently uses cost-driven policies to select one interdomain p
 	\label{table:classification}
 \end{table*}
 
-Customers have more and more strigent requirements on the path quality. Customers select the right network service based on their requirements and budget, which can change with the development. Take some customers in Table \ref{table:classification} as examples. 
+Customers have more and more strigent requirements on the path quality. Customers select the right network service based on their requirements and budget, which can change with the development. Take some customers in Table \ref{table:classification} as examples. For gaming and finance, rather than low price, users prefer Premium services to achieve latency as low as possible for speficied flows globally. Instead, for CDN and OBS services, users mainly focus on the low price of the path by choosing Cost-centric service. Therefore, we need the capability at data plane to identify the fine grain flows specified by users, and monitoring the paths quality for flow routes scheduling.
 
-traffic over low latency, highly reliable global network reserved by cloud provider. GCP customers benefit from the global features within Global Load Balancing, another Premium Tier feature. You not only get the management simplicity of a single anycast IPv4 or IPv6 Virtual IP (VIP), but can also expand seamlessly across regions, and overflow or fail over to other regions.
-
-For example, as shown , 
-
-
-
-
-Practical and cost-efficient online edge TE. Since optimizing percentile costs is NP-Hard, finding optimal solutions can take several hours. We leverage insights from the offline optimal solution to design an efficient, heuristic based online TE framework. The framework leverages the cloud provider’s rich diversity of latency-equivalent BGP peers to offer cheaper options to outbound traffic. Through extensive experiments we demonstrate that CASCARA provides near-optimal cost saving in practice and can be deployed safely and incrementally in cloud WANs. 
-
-Public Cloud Business Demands for Internet Network Differentiation. There are various types of public cloud internet exports, with different exports having different performance (coverage), costs, and supply situations. It is precisely because of the different types of resources mentioned above that the demand for combining different ISP export resources into different product packages arises. At the same time, there are various types of public cloud upper level businesses, with different traffic models and network requirements. The simple requirement for businesses is to only pay for the capabilities they care about, and for unnecessary functions, try to minimize or eliminate costs as much as possible.
 
 \iffalse
 \begin{figure}
@@ -99,20 +89,14 @@ Public Cloud Business Demands for Internet Network Differentiation. There are va
 \para{Monitoring} 
 % 事前，多路径多出口探测，全覆盖规模大18K，ms-级时间戳
 % DSCP标识, 流量复制，测量  % 聚类，top-k排序问题 
-The data plane estimates loss and delay along different policy-compliant routes. It leverages programmable switches to aggregate delay and loss measurements on a per-destination-next-hop granularity. 
-The monitoring subsystem monitors all IP /24 prefixes. The monitoring subsystem use an active IP collector to collect active IPs for each IP /24 prefix. The collected active IP is provided to the SLA monitor. The SLA monitor selects from the active IP set the representative IP addresses. Each chosen IP address is sent with ICMP Request packets to calculate the packet loss rate. The data about packet loss rate will be aggregated at AS-granularity. It is very important for in-band measurement instead of out-band monitoring. It can also deal with adversarial inputs (faking signals which influence the monitor healthy). 
-
-
-% 这一段重写 
-The MS component, as shown in Figure \ref{}, is responsible for accurately and scalably measuring the delay of any flow. We refer to the actively probe [Huawei ATC23]. The volume of probing traffic is likely orders of magnitude less than the actual traffic, and some ISPs are known to treat probing traffic preferentially \cite{zhang2010optimizingEntact, valancius2013PECAN, liu2016Footprint}. More important, low-volume probing is inadequate for accurately measuring loss rate, while high-volume probing on all destinations via multiple paths would lead to significant extra load. Probing has been successfully used for performance driven intra-domain routing in the past e.g., Contra [35]. Yet, such techniques are impractical in our inter-domain context as they would require one Vantage Point at each destination network. 
-
-Though the number of active IP addresses varies greatly in different IP /24 blocks, the active IP addresses in each IP /24 block share the similar Internet path, it is of no worth measure all of them. {\sys} builds a simple mechanism to select representative IP addresses from active IP set: for each IP /24 block with more than ten active IP addresses, we randomly select ten of them as representative IP addresses; Otherwise, we select all of them as representative IP addresses. 
+The data plane estimates loss and delay along different policy-compliant routes. It leverages programmable switches, i.e. the MS component as shown in Figure \ref{fig:bg},  are responsible for accurately and scalably measuring the delay of each egress port.
+The monitoring subsystem uses an active IP collector to collect active IPs for each IP /24 prefix. The data about packet loss rate will be aggregated at AS-granularity. The volume of probing traffic is likely orders of magnitude less than the actual traffic, and some ISPs are known to treat probing traffic preferentially \cite{zhang2010optimizingEntact, valancius2013PECAN, liu2016Footprint}. More important, low-volume probing is inadequate for accurately measuring loss rate, while high-volume probing on all destinations via multiple paths would lead to significant extra load. {\sys} builds a simple mechanism to select representative IP addresses from active IP set: for each IP /24 block with more than ten active IP addresses, we randomly select ten of them as representative IP addresses; Otherwise, we select all of them as representative IP addresses The monitoring sub-system is out of the scope of this paper, please refer to our papers in ATC and SIGCOMM.\footnote{We remote the citations due to the requirement of ananymous!}. 
 
 \subsection{Challenges}
 By considering the joint management of Internet routing with backbones, as well as the fine grant performance-aware flows, we meet the following challenges. 
 
 \begin{itemize}[leftmargin=*] 
-\item \textit{Scheduling with multi-objective.} We need an effective scheduling approach to solve the multi-objective problem which meet diverse demands of differerent suers while maintaining low operational cost.  
+\item \textit{Scheduling with multi-objective.} Practical and cost-efficient online edge TE. Since optimizing percentile costs is NP-Hard, finding optimal solutions can take several hours. We need an effective scheduling approach to solve the multi-objective problem which meet diverse demands of differerent suers while maintaining low operational cost.  
 \item \textit{High computation complexity.} Given the fine grain traffic flows as well as the links associated with both peer routers and backbone, the optimization apporach grappled with the order of 1000x increase. 
 \item \textit{Deployment for large volumn of flows.} We need a distrbuted control planes to realize the parallel computation. In additon, we need a more effective route compression approach in data planes to implement the routing deployment with regard to the scare memory (dozens of MB at best) in existing commodity switches.
 \end{itemize}

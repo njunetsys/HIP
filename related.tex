@@ -1,17 +1,36 @@
 \section{Related Work}
-In the last decade, SDN-based traffic engineering has been widely used in cloud networks.  large cloud
-providers have deployed SDN-based centralized TE in their planetscale WANs to allocate traffic between datacenters \cite{hong2013achieving,jain2013B4,li2018trafficshaper,hong2018b4,kandula2014calendaring,laoutaris2011inter,liu2014traffic,jalaparti2016dynamicPretium,bogle2019teavar}. 
+% Over the past decade, SDN-based traffic engineering has been widely adopted in cloud networks. Major cloud providers have deployed centralized SDN-based TE in their planet-scale WANs to allocate traffic between data centers \cite{hong2013achieving,jain2013B4,li2018trafficshaper,hong2018b4,kandula2014calendaring,laoutaris2011inter,liu2014traffic,jalaparti2016dynamicPretium,bogle2019teavar}. In contrast, 
 
-Cloud providers engineer traffic
-at the edge of their networks by allocating demands on the links
-between the cloud and ISPs. Recent work has shown the role of
-engineering inter-WAN traffic for performance improvement \cite{yap2017espresso,schlinker2017edgefabric,landa2021staying} and
-cost reduction\cite{singh2021costCascara}.
-The software-defined edge routers have been widely applied to manage outbound traffic from the cloud networks. Espresso \cite{yap2017espresso} and Edge Fabric \cite{schlinker2017edgefabric,landa2021staying} employ performance-based routing. \cite{liu2016Footprint,valancius2013PECAN,zhang2010optimizingEntact,singh2021costCascara,yap2017espresso,caesar2005design,feamster2003guidelines,gupta2014sdx,schlinker2017edgefabric,krishnaswamy2023onewan,chen2015end,flavel2015fastroute,koch2023painter,markovitch2022tipsy}. TIPSY \cite{markovitch2022tipsy} and PAINTER \cite{koch2023painter} focus on ingress traffic engineering. OneWAN \cite{krishnaswamy2023onewan} recently introduced the unification management of the cloud network with a single SDN-controlled backbone. OneWAN \cite{krishnaswamy2023onewan} and \cite{chen2015end,flavel2015fastroute,zhang2010optimizingEntact} focuses on the dynamic path selection and load balancing of this traffic between the peering edge and the end host in the data center, while {\sys} focuses on the outbound inter-domain bandwidth cost and client performance together.
+% %\cite{liu2016Footprint,valancius2013PECAN,zhang2010optimizingEntact,singh2021costCascara,yap2017espresso,caesar2005design,feamster2003guidelines,gupta2014sdx,schlinker2017edgefabric,krishnaswamy2023onewan,chen2015end,flavel2015fastroute,koch2023painter,markovitch2022tipsy,landa2021staying}
+% Cloud providers also use traffic engineering at the edge of their networks to allocate traffic demands on the links between the cloud and ISPs. TIPSY \cite{markovitch2022tipsy} and PAINTER \cite{koch2023painter} focus on ingress traffic engineering while {\sys} focus on egress traffic engineering. The most relevant work to us demonstrates the role of engineering inter-domain traffic for performance improvement \cite{yap2017espresso,schlinker2017edgefabric,landa2021staying,zhang2010optimizingEntact,liu2016Footprint,gupta2014sdx} and cost reduction\cite{singh2021costCascara,goldenberg2004optimizing}. However, {\sys} combines performance-aware routing and cost-effective routing together. 
 
 
-Extensive research works \cite{singh2021costCascara,jalaparti2016dynamicPretium,goldenberg2004optimizing,zhang2010optimizingEntact,chen2022onlineOnTPC} have been devoted to bandwidth cost optimization. For example, OnTPC, Cascara \cite{chen2022onlineOnTPC, singh2021costCascara, goldenberg2004optimizing} address the optimization of inter-domain $95^{th}$ percentile bandwidth. {\sys} explicitly incorporates backbone constraints, employs fine-grained performance-aware flows, and places a strong emphasis on large-scale deployment optimization. Our work considers inter-datacenter capacity constraints when performing traffic engineering on the Internet. 
+% Extensive research works \cite{singh2021costCascara,jalaparti2016dynamicPretium,goldenberg2004optimizing,zhang2010optimizingEntact,chen2022onlineOnTPC} have been devoted to bandwidth cost optimization. For example, \cite{chen2022onlineOnTPC, singh2021costCascara,goldenberg2004optimizing} address the optimization of inter-domain $95^{th}$ percentile bandwidth. {\sys} explicitly incorporates backbone constraints, employs fine-grained performance-aware flows, and places a strong emphasis on large-scale deployment optimization. 
 
+
+% OneWAN \cite{krishnaswamy2023onewan} recently introduced the unification management of the cloud network with a single SDN-controlled backbone. But OneWAN and \cite{chen2015end,flavel2015fastroute,zhang2010optimizingEntact} focus on the dynamic path selection and load balancing of this traffic between the peering edge and the end host in the data center, while {\sys} focuses on the outbound inter-domain bandwidth cost and client performance together.
+
+
+\noindent \textbf{Traffic engineering on the WAN.}
+SDN-based traffic engineering was first used in WAN networks \cite{hong2013achieving,jain2013B4,li2018trafficshaper,hong2018b4,kandula2014calendaring,laoutaris2011inter,liu2014traffic,jalaparti2016dynamicPretium,krishnaswamy2023onewan,bogle2019teavar}. {\sys} takes inter-datacenter capacity constraints into consideration when performing traffic engineering on the Internet. Actually, {\sys} focuses on inter-domain traffic engineering.
+
+\noindent \textbf{Traffic engineering on the Internet.}
+Cloud providers also use traffic engineering at the edge of their networks to allocate traffic demands on the links between the cloud and ISPs. {\sys} sets itself apart from TIPSY \cite{markovitch2022tipsy} and PAINTER \cite{koch2023painter} by exclusively prioritizing egress traffic engineering, while the latter two focus on ingress traffic engineering. The most relevant work to us demonstrates the role of engineering inter-domain traffic for performance improvement \cite{yap2017espresso,schlinker2017edgefabric,landa2021staying,zhang2010optimizingEntact,liu2016Footprint,gupta2014sdx} and cost reduction\cite{singh2021costCascara,goldenberg2004optimizing}.
+Our system, {\sys}, improves client performance in the same way as Espresso \cite{yap2017espresso} by routing traffic to the best {\egress}. But we improve the outbound inter-domain bandwidth cost and client performance together while Espresso \cite{yap2017espresso} and Edge Fabric \cite{schlinker2017edgefabric} only improve client performance. 
+
+\noindent \textbf{Unifying inter-domain TE and intra-domain TE.} OneWAN \cite{krishnaswamy2023onewan} is another recent work that unifies inter-datacenter TE and Internet TE. OneWAN \cite{krishnaswamy2023onewan} and \cite{chen2015end,flavel2015fastroute,zhang2010optimizingEntact} focuses on the dynamic path selection and load balancing of this traffic between the peering edge and the end host in a datacenter while {\sys} and \cite{liu2016Footprint,valancius2013PECAN,zhang2010optimizingEntact,singh2021costCascara,yap2017espresso,caesar2005design, feamster2003guidelines, gupta2014sdx, schlinker2017edgefabric} focus on choosing which PoP and/or path a client should be directed to.
+
+% The goal of these efforts has been to react  to poor client performance by switching to better performing BGP next hops. The allocation decisions made by CASCARA can be implemented using a software defined edge like Espresso or EdgeFabric. The subject of TE in multi-hoped networks has been studied \cite{goldenberg2004optimizing,quoitin2003interdomain}
+
+% Cascara, OnTPC, Pretium, Entact, 
+\noindent \textbf{Bandwidth pricing.}
+Extensive research \cite{singh2021costCascara,jalaparti2016dynamicPretium,goldenberg2004optimizing,zhang2010optimizingEntact,chen2022onlineOnTPC} has been devoted to bandwidth cost optimization for decades. Our work, in conjunction with prior studies \cite{chen2022onlineOnTPC, singh2021costCascara, goldenberg2004optimizing}, addresses the optimization of inter-domain $95^{th}$ percentile bandwidth costs. What sets us apart is that {\sys} explicitly incorporates backbone constraints, employs a finer granularity of traffic, and places a strong emphasis on large-scale deployment optimization.
+
+
+
+
+\noindent \textbf{Performance-based routing.}
+In recent times, prominent global networks \cite{yap2017espresso, schlinker2017edgefabric, singh2021costCascara} consistently engage in Internet traffic engineering endeavors to improve client performance. Espresso \cite{yap2017espresso} and Edge Fabric \cite{schlinker2017edgefabric} employ performance-based routing, whereas Cascara \cite{singh2021costCascara} integrates performance requirements into its conditions. In contrast, our {\sys} not only implements performance-based routing but also optimizes outbound bandwidth costs simultaneously. 
 
 % 这里 Measurement一定要加上 OneWAN
 %\noindent \textbf{Measurement.}

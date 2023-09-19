@@ -1,4 +1,36 @@
 \section{Appendix}
+\subsection{The Overall Formalization Agorithm}
+In this section we describe in detail the algorithm for the overall level formalization problem as mentioned in Section \ref{sec:overall-opt}.
+
+\para{Input parameters.}
+The common input in Table \ref{tab:common input} comprises elements related to network topology, including both WAN infrastructure and cloud edge components. The cost of a {\egress} is determined by both the {\egress}'s peering rate and the billable bandwidth, where each {\egress}'s peering rate is determined and given by the peering ISP.
+
+The $ub_i$ signifies that, regardless of whether the cloud uses {\egress} $l_i$ during the current billing period (usually one month), once the cloud procures {\egress} $l_i$, it incurs a minimum cost of $ub_i \cdot c_i$ for ISP peering. 
+
+In addition to the common input parameters, we input the bandwidth demand of each PoPs $\{b^1_u, b^2_u, ..., b^n_u\}$ of one month and the corresponding total bandwidth demand $\{d_1, d_2,..., d_{n}\}$ of each slot in this month, which are predicted based on the previous three months' bandwidth data. 
+
+ 
+A month consisting of 30 days has 8640 time slots.
+
+\para{Decision variables.}
+The overall optimization scheme assigns network flow to {\egress} in $L$, for every time slot $j$, $j\in[1,..,n]$. Let $p_i$ be the decision variable which refers to the estimated $95^{th}$ percentile billable bandwidth of {\egress} $l_i$. {\Egress} bursting is the allocation of the maximum available bandwidth to an {\egress}, with the precondition of avoiding congestion. Specifically, when $k_{i}^j$ is equal to 1, the bandwidth allocation of egress $l_i$ can be extended to $C_i$, and we refer to this as bursting. When $k_{i}^j$ is equal to 0, the bandwidth allocation of egress $l_i$ can only be extended to $p_i$, and we refer to this as not bursting.
+
+% 如果 k 为 1 ，我们称之为 burst  % 因为我们是使用的预测数据输入的，因此 p_i 成为 estimated billable bandwidth
+
+
+\para{Objective function.}
+The objective of algorithm \ref{alg1} is to minimize the total outbound bandwidth cost incurred across all {\egresses}:
+$$\min\sum_{l_i \in L} c_i p_i$$
+
+
+\para{Constraints.}
+As described in the background, the $95^{th}$ percentile billing model calculates the bandwidth cost while ignoring the top 5\% of bandwidth usage. This implies that 5\% of the total time slots are considered free or unused. During these free time slots, we can allocate maximum bandwidth to the {\egress}. Therefore, the number of times that an {\egress} can burst is constrained to 5\% of the total number of time slots. In addition, traffic allocations on an {\egress} are subject to the constraint of {\egress}'s capacity. For each {\egress} $l_i$, the traffic size of 5\% of the time slots is greater than or equal to $p_i$, and the traffic size of the remaining 95\% of the time slots is less than or equal to $p_i$. Most notably, traffic scheduling between different PoPs is subject to the constraint of backbone link capacity of backbone.
+
+% {The first constraint states that 5\% of the total time slots in a month should be reserved for {\egress} bursting. The second constraint ensures that the total bandwidth demand during a specific time slot doesn't exceed the combined capacity of all {\egress}s. The third constraint specifies that the estimated chargeable bandwidth of {\egress}s should be greater than the guaranteed bandwidth. Furthermore, the fourth constraint dictates that the remaining bandwidth at the PoP - accounting for both incoming and outgoing bandwidth - must be less than or equal to the total available capacities of {\egress}s at the PoP. Additionally, the fifth constraint establishes that the bandwidth along the backbone link must be within its capacity constraint. Lastly, the sixth constraint mandates that there should be surplus bandwidth after scheduling within the PoP.}
+
+% Cutting-edge optimization solvers use a combination of techniques to solve general Mixed Integer Programs (MIPs). At a high level, the first step is relaxing the MIP to an efficiently solvable Linear Program (LP) by removing the integral constraints. If a feasible solution to the LP is not found, the MIP, in turn, is also infeasible. If a feasible solution is found, the solution of the LP is a lower bound to the solution of the original MIP. Therefore, the LP solution provides the lower bound on bandwidth cost without having to solve the MILP. We note that Algorithm \ref{alg1} has O(mn) variables. Predicting the difficulty of Integer programs in terms of the number of variables and constraints is hard. Indeed, using upper bounds and lower bounds can efficiently reduce the solution space, which greatly reduces the algorithm’s running time. The reason behind this behavior is that only consider value between upper bounds and lower bounds make it easier for the optimization to find results which meet demands without violating constraints. Once the LP relaxation has been solved, MIP solvers find feasible solutions of the MIP problem from an exponential number of possibilities. 
+
+
 \begin{algorithm}
 	\caption{Overall Optimization Algorithm}
 	\label{alg1}
@@ -41,6 +73,24 @@
 	\end{algorithmic}
 \end{algorithm}
 
+\subsection{The Time Slot Formalization Agorithm}
+In this section we describe in detail the algorithm for the time slot level formalization problem as mentioned in Section \ref{sec:timeslot-opt}.
+
+\para{Input parameters.}
+{In addition to the common input parameters about the WAN and the edge of the cloud. The data input is all related to the current time slot $t$, including $b^t_{u}$ and $F^t$. $b^t_{u}$ denoting Default bandwidth of PoP $u$ in time slot $j$ refers to the bandwidth of PoP $u$ before scheduling considering all flows egressing via their respective default {\egress}. We need $b^t_{u}$ when dealing with constraints about backbone capacity. $F^t=\{f^t\}$ denotes all the demand flows from the WAN in time slot $t$. $y^t_i$ is the maximal available bandwidth in time slot $t$ described in phase I input parameters.}
+
+
+\para{Decision variables.} The time slot optimization scheme assigns network flow to {\egresses} in $L$ in time slot $t$, $t\in[1,..,n]$. We introduce the decision variable $b^t_{(u,v)}$ to represent the bandwidth allocation on backbone link $(u,v)$ from PoP $u$ to PoP $v$ in time slot $t$. The binary decision variable $x_{(u,v)}^{f^{t}}$ indicates whether flow $f$ egresses through {\egress} $l_i$ within time slot $t$, and the binary decision variable $x_i^{f^{t}}$ indicates whether it traverses backbone link $(u,v)$ within time slot $t$.
+
+
+
+
+\para{Objective function.}
+The goal of our time slot optimization scheme is to find a flow assignment to edge links in the current time slot $t$ such that the current inter-domain bandwidth cost, the current weighted sum of the performance factor of all flows, and the remaining capacity of burst {\egress} is minimized. The cost in time slot $t$ incurred on {\egress} $l_i$ is the product of the peering rate ($c_i$) and the $95^{th}$ percentile utilization of that link (denoted by $p_i^t$). 
+
+$$\min\sum_{l_i \in L} c_i \cdot p_i^t+\sum_{f^t \in F_s} w_1\left(V_f\right) x_i^{f^t}          \cdot perf(i, f^t) +w_2 \sum_{l_i \in L} y_i $$
+
+\para{Constraints.} The constraints introduced in our formalization pertain to {\egresses}, backbones, and PoPs. The bandwidth allocation of a PoP depends on its outgoing, incoming, and default bandwidth. The assignment of a flow during time slot $t$ depends on the available capacity of {\egresses} and backbones. The constraints hold significant importance in the following order: Firstly, ensuring that the $95^{th}$ percentile bandwidth of each outlet in a time slot is not lower than the $95^{th}$ percentile bandwidth of the previous time slot. Secondly, each flow must select one of its available outlets, where $x_i^f$ can only be either 0 or 1. Thirdly, the total traffic carried by each outlet must not exceed its maximum available bandwidth. Fourthly, the traffic load on each backbone link should not exceed its maximum available bandwidth. Fifthly, each flow must traverse either an outlet within the source PoP or a backbone link. Sixthly, the number of incoming backbone links that each flow passes through within a non-source PoP should be equal to the number of incoming and outgoing flows. Seventhly, the flow rate of each PoP egress with a P4 device must be greater than or equal to 0 and should not exceed the sum of the available bandwidths of the egress links. Eighthly, the flow rate of each PoP without a P4 device through the backbone should be equal to the number of outgoing flows, indicating its transit role. Ninthly, the maximum available bandwidth of an egress with an exhaustive available punchdown slot equals the 95th percentile bandwidth. Finally, the maximum available bandwidth is set to the 95th percentile bandwidth. Additionally, there are constraints on the maximum available bandwidth of egresses for the available topping time slots: When $k_i=0$, the first two constraints are applied, introducing $y_i=k_i$. When $k_i=1$, the last two constraints are applied, introducing $y_i=C_i$.
 
 
 \begin{algorithm}
@@ -93,7 +143,17 @@
 
 
 
+\subsection{{\EGRESS} Burst Decision Algorithm}
+In this section we describe in detail how we model the {\egress} burst decision problem, as we mentioned in Section \ref{Solving Optimization Quickly}. This algorithm can in a way be regarded as a combination of an overall level algorithm and a time slot level algorithm. It uses the methodology of the overall level algorithm to statistically compute the flow bandwidth within a PoP, while considering the goal of the time slot level algorithm to minimize the cost.
 
+\para{Input parameters.} In addition to the common inputs listed in Table \ref{tab:common input}, the algorithm requires only the current time slot and the sum of the traffic bandwidth in each PoP under the current time slot.
+
+
+\para{Decision variables.} We set two decision variables. $b^t_{(u,v)}$ denotes the usage of the backbone link from PoP $u$ to PoP $v$ in time slot $t$. This variable will be used to indicate the utilized capacity of each physical backbone link. $k_i^t$ is a binary variable indicating if {\egress} $i$ needs to burst in time slot $t$. This variable will be used to determine the maximum available capacity for each {\egress}.
+
+\para{Objective function.} In order to minimize the cost, as we analyzed in Section \ref{sec:overall-opt}, we need to utilize the maximum capacity of each {\egress} as much as possible. Thus the objective function is set to minimize the sum of unused capacity at each {\egress}.
+
+\para{Constraints.} Constraints mainly stem from limited {\egress} capacity and backbone link capacity. The first and second constraints ensure that the bandwidth allocated to each {\egress} does not exceed the maximum available capacity of that {\egress}, while deciding whether or not that {\egress} is burst. The third constraint ensures that the usage of each backbone link does not exceed its maximum capacity. The implication of the last two constraints is that the sum of the bandwidth of the remaining traffic within each PoP after scheduling cannot be negative and cannot exceed the sum of the available capacity of all the {\egresses} within that PoP.
 
 \begin{algorithm}
 	\caption{{\EGRESS} Burst Decision Algorithm}
@@ -129,12 +189,3 @@
             \end{array}$$
 	\end{algorithmic}
 \end{algorithm}
-
-
-\begin{figure}
-	\centering
-	\includegraphics[width = 8cm]{figs/implement/OptEffect.jpg}
-	\caption{\small Impact of each optimization on the
- approximate running time of the scheduling algorithm per time slo}
-	\label{fig:OptEffect}
-\end{figure} 
