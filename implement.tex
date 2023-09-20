@@ -4,22 +4,18 @@
 % 阐述调度的 系统 需求（目标）
 
 
-% \textcolor{red}{The current scheduling scenarios independently perform optimal routing calculations based on business objectives, and ultimately detect and merge routing conflicts between scenarios at the routing layer. Analogous to the priority of different routing protocols on routers, the controller routing management module takes effect based on the priority of the scheduling type. The routing of high priority scheduling tasks takes effect, while the routing of low priority scheduling is suspended. It takes effect after the cancellation of high priority scheduling routes. The priority of scheduling tasks is: manual scheduling>fault scheduling>performance scheduling>cost scheduling>load balancing scheduling. This method effectively solves the conflict problem between different scheduling tasks, but due to the independent calculation of each scheduling task without considering the impact of other scheduling tasks, the calculated results are not globally optimal, and there is room for optimization and improvement.}
+% \textcolor{red}{The current scheduling scenarios independently perform optimal routing calculations based on business objectives, and ultimately detect and merge routing conflicts between scenarios at the routing layer. Analogous to the priority of different routing protocols on routers, the controller routing management module takes effect based on the priority of the scheduling type. The routing of high-priority scheduling tasks takes effect, while the routing of low-priority scheduling is suspended. It takes effect after the cancellation of high-priority scheduling routes. The priority of scheduling tasks is manual scheduling>fault scheduling>performance scheduling>cost scheduling>load balancing scheduling. This method effectively solves the conflict problem between different scheduling tasks, but due to the independent calculation of each scheduling task without considering the impact of other scheduling tasks, the calculated results are not globally optimal, and there is room for optimization and improvement.}
 
 % {The goal of this research is to solve the optimal distribution solution of network traffic based on the Huawei cloud public network resource layout (PoP points + ISP operators + bandwidth), real-time traffic information, real-time performance dial test data, and network traffic cost unit price model, according to different network demands and corresponding priorities of business, and considering the impact of human operation and maintenance scheduling on traffic paths, And drive the underlying SDN traffic scheduling system for real-time traffic scheduling, achieving competitive performance and cost leadership while ensuring network stability and reliability.}
 
-The aim of {\sys} is to address the optimal distribution solution for network traffic within the cloud public network resource layout. This involves considering the combination of PoP points, ISP operators, and bandwidth, along with real-time traffic information, performance dial test data, and a network traffic cost unit price model. By taking into account diverse network demands and corresponding business priorities, as well as the influence of human operation and maintenance scheduling on traffic paths, our objective is to drive the underlying SDN traffic scheduling system for real-time traffic scheduling. This approach enables us to achieve both competitive performance and cost leadership, while ensuring network stability and reliability.
+% The aim of {\sys} is to address the optimal distribution solution for network traffic within the cloud public network resource layout. This involves considering the combination of PoP points, ISP operators, and bandwidth, along with real-time traffic information, performance dial test data, and a network traffic cost unit price model. By taking into account diverse network demands and corresponding business priorities, as well as the influence of human operation and maintenance scheduling on traffic paths, our objective is to drive the underlying SDN traffic scheduling system for real-time traffic scheduling. This approach enables us to achieve both competitive performance and cost leadership while ensuring network stability and reliability.
 
+Our {\sys} optimizes traffic distribution in Internet networks to improve the performance of sensitive flows while minimizing outbound bandwidth costs in the billing period.  We start by presenting the definition of our optimization problem (\S\ref{sec:problem-def}) and divide the optimization process into two phases (\S\ref{sec:problem-decomp}). We then describe each phase (\S\ref{sec:overall-opt} and \S\ref{sec:timeslot-opt}) and extract valuable insights from their respective functionalities.
 
-\subsection{Problem Definition}
+\subsection{Problem Definition} \label{sec:problem-def}
 % Charging model;peering contract;% 以及和性能相关的协约规定 ，（相当于背景介绍）（不清楚放bg&motivation 还是这里）
 % input output  % 要说明为什么只用出云不用入云带宽
-In this section, we present a formalization of the task of cloud edge traffic engineering in a cloud network. 
-
-Clients inherently prioritize aspects of their agreement with the cloud provider and may not be as concerned about aspects not explicitly specified in the agreement. 
-
-Additionally, cloud providers are faced with the challenge of reducing inter-domain bandwidth costs in response to the rapid growth of traffic demand in cloud networks. 
-Consequently, cloud providers focus on optimizing outbound traffic engineering to improve the performance of specific applications that cater to corresponding clients and minimize the overall cost of inter-domain bandwidth.
+In this section, we explain the goal of cloud edge traffic engineering within a cloud network. Clients naturally emphasize elements outlined in their agreements with the cloud provider, while potentially overlooking aspects not explicitly addressed in these agreements. Cloud providers, on the other hand, must balance the need to reduce inter-domain bandwidth costs with the rapid growth of traffic demand. This leads cloud providers to concentrate on optimizing outbound traffic engineering to improve the performance of specific applications that cater to corresponding clients while simultaneously minimizing the overall cost of inter-domain bandwidth.
 
 In our TE optimization, we have two objectives in terms of both performance-aware traffic and operation cost. 
 
@@ -30,14 +26,14 @@ Objective 2: Minimizing the weighted sum of performance factors in each time slo
 
 
 
-% {\sys} minimize bandwidth costs charged from ISP and backbone network billed by their utilization and minimize weighted latency of flows with high priority. We first introduce the following notation and formally specify the flow assignment problem: Given cost functions $Cost_{i}$ for each ISP  $i$, the flow assignment problem is to find allocation that minimizes the total cost $\sum_{i} c_{i}(p_{i}) + \sum_{g} c_{g}(\sum_{i} T_{ig})$. After the total cost is minimize, our framework further provides the flexibility to pick the operating point on cost-latency trade-off to minimize weighted latency of latency-sensitive flows $\sum_{f} L_{i}^{f}X_{i}^{f}P_{f})$ and finds allocations that best suit users need.
+% {\sys} minimize bandwidth costs charged from ISP and backbone network billed by their utilization and minimize weighted latency of flows with high priority. We first introduce the following notation and formally specify the flow assignment problem: Given cost functions $Cost_{i}$ for each ISP  $i$, the flow assignment problem is to find allocation that minimizes the total cost $\sum_{i} c_{i}(p_{i}) + \sum_{g} c_{g}(\sum_{i} T_{ig})$. After the total cost is minimized, our framework further provides the flexibility to pick the operating point on cost-latency trade-off to minimize weighted latency of latency-sensitive flows $\sum_{f} L_{i}^{f}X_{i}^{f}P_{f})$ and finds allocations that best suit users need.
 
-% \textbf{Objective function}. In our problem, we have two different objective: minimizes the total cost $\sum_{i} c_{i}(p_{i}) + \sum_{g} c_{g}(\sum_{i} T_{ig})$.  Let E = $\{e_{1}, e_{2}, ... , e_{n}\}$ be the set of all ISP from the WAN. Let a five-minute interval in the monthly billing period be $i$ where $i$ is in $\{1,2,..,M\}$. For instance, the month of January has $M$ = 8,928 five-minute intervals. The goal of our allocation scheme is to find a traffic assignment to ISP {\egresses} over the entire billing period such that the total bandwidth cost minimized. The cost incurred by each ISP is usually based on the 95th percentile utilization of that ISP, i.e., cost = $Cost(x)$, where $x$ is the charging volume and function $Cost(x)$ is the charging function. 
+% \textbf{Objective function}. In our problem, we have two different objectives: minimizes the total cost $\sum_{i} c_{i}(p_{i}) + \sum_{g} c_{g}(\sum_{i} T_{ig})$.  Let E = $\{e_{1}, e_{2}, ... , e_{n}\}$ be the set of all ISP from the WAN. Let a five-minute interval in the monthly billing period be $i$ where $i$ is in $\{1,2,..,M\}$. For instance, the month of January has $M$ = 8,928 five-minute intervals. The goal of our allocation scheme is to find a traffic assignment to ISP {\egresses} over the entire billing period such that the total bandwidth cost is minimized. The cost incurred by each ISP is usually based on the 95th percentile utilization of that ISP, i.e., cost = $Cost(x)$, where $x$ is the charging volume and function $Cost(x)$ is the charging function. 
 
 % The operator can decide for each destination prefix whether they want to: (i) optimize for the delay and/or loss; (ii) minimize the number of traffic shifts necessary to meet the requirements; or (iii) load-balance traffic by minimizing the difference between the most- and the least-used next-hop. Linear combinations of these or similar other objectives are easily implementable.
 
 % \para{Constraint}
-% Operational constraints: {\sys} admits constraints of two types: (i) those that limit the number of next-hops traffic can be spread on; and (ii) those that define performance constraints. Constraining the maximum number of next-hops per destination might be useful, for instance, to ease debugging. Performance constraints are maximum loss/delay values that traffic for a certain destination should experience. Defining such objectives is useful for meeting Service Level Agreements (SLAs) or particular application requirements
+% Operational constraints: {\sys} admits constraints of two types: (i) those that limit the number of next-hops traffic that can be spread on; and (ii) those that define performance constraints. Constraining the maximum number of next-hops per destination might be useful, for instance, to ease debugging. Performance constraints are the maximum loss/delay values that traffic for a certain destination should experience. Defining such objectives is useful for meeting Service Level Agreements (SLAs) or particular application requirements
 
 % Due to the uncertainty of the operator's network, network congestion or interruption often occurs, directly causing interruption or deterioration of user access to cloud services, leading to major network failures. To solve this problem, Cloud has built a self-developed network testing system, which uses its own probe to real-time test the network quality of a large number of end users. When there is an abnormality in the operator's network, based on network test data and its own network fault demarcation algorithm, it can quickly sense the faulty operator's line and precise province (or AS number), and drive the SDN scheduling platform to schedule the affected user network segments to the normal path, achieving rapid recovery from faults.
 
@@ -57,7 +53,7 @@ Objective 2: Minimizing the weighted sum of performance factors in each time slo
 
 
 
-\subsection{Problem Decomposition}
+\subsection{Problem Decomposition} \label{sec:problem-decomp}
 Considering the two stated objectives, the first objective is focused on the minimization of the total inter-domain $95^{th}$ percentile bandwidth cost. It takes the overall bandwidth trends of the cloud as input and generates the final $95^{th}$ percentile billable bandwidth for each {\egress}. \textbf{Therefore, solving the $95^{th}$ percentile charging problem requires considering the entire time period and the bandwidth profile, without being sensitive to the specific flow scheduling per time slot.} The second objective, minimizing the weighted sum of performance factors, focuses solely on the actions of each performance-sensitive flow within each time slot, without considering the scheduling of other time slots or bandwidth trends. As a result, scheduling can be divided into two phases:
 
 % \subsection{Offline Solution: Formulate Optimization Problem}
@@ -106,28 +102,26 @@ $c_i$ &  Peering rate (USD/Gbps) for {\egress} $l_i$ \\\hline
 % $x_i^f$ & Whether flow $f$ egresses via {\egress} $i$  \\\hline
 % $x^f_{(u,v)}$ & Whether flow $f$ go through backbone link $(u,v)$ \\\hline
 \end{tabularx}
-\caption{\label{tab:common input}Common input parameters. Both the overall optimization phase and the time slot optimization phase will incorporate these parameters as input.}
+\caption{\label{tab:common input}\small Common input parameters. Both the overall optimization phase and the time slot optimization phase will incorporate these parameters as input.}
 \end{table}
 
 \subsection{Overall Formulation}    \label{sec:overall-opt}
-{In this section we formalize the task of overall optimization, which entails the minimization of interdomain bandwidth costs within a cloud network. Previous work \cite{goldenberg2004optimizing} has shown that the problem of optimizing costs under a percentile-based charging model is NP-Hard. We can transform the problem and formulate the traffic cost optimization problem as a Mixed Integer Linear Program (MILP), as shown in Algorithm \ref{alg1}. We implement the formulation using the OR-Tools solver \cite{or-tools}. Typically, as outbound traffic to paid peers is significantly higher than inbound \cite{singh2021costCascara}, we focus on minimizing the overall inter-domain bandwidth cost.}
+{In this section we formalize the task of overall optimization, which entails the minimization of interdomain bandwidth costs within a cloud network. Previous work \cite{goldenberg2004optimizing} has shown that the problem of optimizing costs under a percentile-based charging model is NP-Hard. We can transform the problem and formulate the traffic cost optimization problem as a Mixed Integer Linear Program (MILP), as shown in Algorithm \ref{alg1}. We implement the formulation using the OR-Tools solver \cite{or-tools}. Typically, as outbound traffic to paid peers is significantly higher than inbound \cite{singh2021costCascara}, we focus on minimizing the total outbound bandwidth cost.}
 
 % We denote $L=\{l_1, l_2,...,l_{\left| L \right|} \}$ as the set of all {\egresses}, where $\left| L \right|$ is the number of {\egresses}. And 
 We define $p_i$ as the estimated billable bandwidth of egress $l_i$. The $p_i$ is the $95^{th}$ percentile bandwidth utilization of egress $l_i$ at the end of the billing period all of which minimizes the total bandwidth cost.
-The core of the problem lies in how to determine the values of $\{p_1, p_2,..., p_{m}$, which should be able to minimize the total outbound bandwidth cost.
+The core of the problem lies in how to determine the values of $\{p_1, p_2,..., p_{m}\}$, which should be able to minimize the total outbound bandwidth cost.
 
 %The cost function consisting of the sum of 95th percentile utilization of links is non-convex. 
 % We formalize the offline version of the problem of optimizing bandwidth costs for DCs. Previous work has shown that the problem of optimizing costs under percentile-based charging model is NP-Hard. However, based on insights described above, with the upper and lower bounds of $\sum_{i} p_{i}$, we can transform the problem and formulates the traffic cost optimization problem as a Mixed Integer Linear Program(MILP), as shown in Algorithm \ref{alg1}. We implement the formulation using the CSlover framework and solve it with the commercial optimization solver.
 
 \para{Input parameters.}
-The common input in Table \ref{tab:common input} comprises elements related to network topology, including both WAN infrastructure and cloud edge components. The cost of a {\egress} is determined by both the {\egress}'s peering rate and the billable bandwidth, where each {\egress}'s peering rate is determined and given by the peering ISP.
+The common input in Table \ref{tab:common input} comprises elements related to network topology, including both WAN infrastructure and cloud edge components. The cost of a {\egress} is determined by both the {\egress}'s peering rate and the billable bandwidth, where each {\egress}'s peering rate is determined and given by the peering ISP. The $ub_i$ signifies that, regardless of whether the cloud uses {\egress} $l_i$ during the current billing period (usually one month), once the cloud procures {\egress} $l_i$, it incurs a minimum cost of $ub_i \cdot c_i$ for ISP peering. 
 
-The $ub_i$ signifies that, regardless of whether the cloud uses {\egress} $l_i$ during the current billing period (usually one month), once the cloud procures {\egress} $l_i$, it incurs a minimum cost of $ub_i \cdot c_i$ for ISP peering. 
-
-In addition to the common input parameters, we input the bandwidth demand of each PoPs $\{b^1_u, b^2_u, ..., b^n_u\}$ of one month and the corresponding total bandwidth demand $\{d_1, d_2,..., d_{n}\}$ of each slot in this month, which are predicted based on the previous three months' bandwidth data. 
+In addition to the common input parameters, we input the bandwidth demand of each PoP $\{b^1_u, b^2_u, ..., b^n_u\}$ of one month and the corresponding total bandwidth demand $\{d_1, d_2,..., d_{n}\}$ of each slot in this month, which are predicted based on the previous three months' bandwidth data. 
 
  
-A month consisting of 30 days has 8640 time slots.
+%A month consisting of 30 days has 8640 time slots. 
 
 \para{Decision variables.}
 The overall optimization scheme assigns network flow to {\egress} in $L$, for every time slot $j$, $j\in[1,..,n]$. Let $p_i$ be the decision variable which refers to the estimated $95^{th}$ percentile billable bandwidth of {\egress} $l_i$. {\Egress} bursting is the allocation of the maximum available bandwidth to an {\egress}, with the precondition of avoiding congestion. Specifically, when $k_{i}^j$ is equal to 1, the bandwidth allocation of egress $l_i$ can be extended to $C_i$, and we refer to this as bursting. When $k_{i}^j$ is equal to 0, the bandwidth allocation of egress $l_i$ can only be extended to $p_i$, and we refer to this as not bursting.
@@ -148,28 +142,38 @@ As described in the background, the $95^{th}$ percentile billing model calculate
 % Cutting-edge optimization solvers use a combination of techniques to solve general Mixed Integer Programs (MIPs). At a high level, the first step is relaxing the MIP to an efficiently solvable Linear Program (LP) by removing the integral constraints. If a feasible solution to the LP is not found, the MIP, in turn, is also infeasible. If a feasible solution is found, the solution of the LP is a lower bound to the solution of the original MIP. Therefore, the LP solution provides the lower bound on bandwidth cost without having to solve the MILP. We note that Algorithm \ref{alg1} has O(mn) variables. Predicting the difficulty of Integer programs in terms of the number of variables and constraints is hard. Indeed, using upper bounds and lower bounds can efficiently reduce the solution space, which greatly reduces the algorithm’s running time. The reason behind this behavior is that only consider value between upper bounds and lower bounds make it easier for the optimization to find results which meet demands without violating constraints. Once the LP relaxation has been solved, MIP solvers find feasible solutions of the MIP problem from an exponential number of possibilities. 
 
 % 是不是需要把这个表格里面的值 和 一个出口上的带宽进行一个比较？
-\begin{table}[t]
-\centering
-\begin{tabularx} {0.480\textwidth} {|X|X|X|X|X|X|X|X|X|}
- \hline
-PoP & JNB & StG & StP & MC & JKT & SP & HK & BKK \\\hline
-JNB & 0 & 0.8 & 2 & 2 & 2 & 5 & 2 & 2 \\\hline
-StG & 0.8 & 0 & 1.6 & 0.8 & 0.8 & 0.8 & 0.8 & 0.8 \\\hline
-StP & 2 & 1.6 & 0 & 4 & 2.4 & 6 & 2.4 & 2.4 \\\hline
-MC & 2 & 0.8 & 4 & 0 & 6 & 6 & 15 & 4 \\\hline
-JKT & 2 & 0.8 & 2.4 & 6 & 0 & 40 & 16 & 4 \\\hline
-SP & 5 & 0.8 & 6 & 6 & 40 & 0 & 200 & 10 \\\hline
-HK & 2 & 0.8 & 2.4 & 15 & 16 & 200 & 0 & 10 \\\hline
-BKK & 2 & 0.8 & 2.4 & 4 & 4 & 10 & 10 & 0 \\\hline
-\end{tabularx}
-\caption{\label{tab:backbone-lack} Lack of backbone capacity. The capacity variation among certain PoPs can indicate significant disparities in backbone capacity. Many of the backbone links suffer from insufficient capacity.}
-\end{table}
+% \begin{table}[t]
+% \centering
+% \begin{tabularx} {0.480\textwidth} {|X|X|X|X|X|X|X|X|X|}
+%  \hline
+% PoP & JNB & StG & StP & MC & JKT & SP & HK & BKK \\\hline
+% JNB & 0 & 0.8 & 2 & 2 & 2 & 5 & 2 & 2 \\\hline
+% StG & 0.8 & 0 & 1.6 & 0.8 & 0.8 & 0.8 & 0.8 & 0.8 \\\hline
+% StP & 2 & 1.6 & 0 & 4 & 2.4 & 6 & 2.4 & 2.4 \\\hline
+% MC & 2 & 0.8 & 4 & 0 & 6 & 6 & 15 & 4 \\\hline
+% JKT & 2 & 0.8 & 2.4 & 6 & 0 & 40 & 16 & 4 \\\hline
+% SP & 5 & 0.8 & 6 & 6 & 40 & 0 & 200 & 10 \\\hline
+% HK & 2 & 0.8 & 2.4 & 15 & 16 & 200 & 0 & 10 \\\hline
+% BKK & 2 & 0.8 & 2.4 & 4 & 4 & 10 & 10 & 0 \\\hline
+% \end{tabularx}
+% \caption{\label{tab:backbone-lack} Lack of backbone capacity. The capacity variation among certain PoPs can indicate significant disparities in backbone capacity. Many of the backbone links suffer from insufficient capacity.}
+% \end{table}
+
+\begin{figure}
+	\centering
+	\includegraphics[width = 6cm]{figs/implement/bandwidth-heatmap.pdf}
+	\caption{\small Lack of backbone capacity. A darker color in the heatmap means a larger value. These are just some of the PoPs within the networks. The off-diagonal elements represent the backbone capacity between source and destination PoPs, while the diagonal elements indicate the default bandwidth of each individual PoP. The heatmap shows that certain PoPs possess more bandwidth than the surrounding backbone links, indicating that numerous backbone links suffer from inadequate capacity.}
+	\label{fig:backbone-lack}
+\end{figure}
+
+% [24.94263544,27.07990681,5.03455738,6.36243848,0.20893283,156.4276099,54.74017829,3.77555]
+% ['约翰内斯堡', "圣地亚哥", "圣保罗", "墨西哥城", "雅加达", "新加坡", "香港"]
 % 搞成一个 heatmap吧
 
 \para{Key insights.}
 {To minimize the overall cost, we draw insights from the status quo of the operator's network and from our analysis of managing the 95th percentile outbound bandwidth cost:}
 \begin{itemize}
-\item{\para{Consideration of backbone link capacity insufficiency.} The assumption made in \cite{singh2021costCascara} presupposes that there is sufficient capacity between network nodes. empirical investigations conducted by network operators (\ref{tab:backbone-lack}), reveal that the capacity of backbone links between PoPs is considerably limited compared to the default bandwidth available of PoPs and {\egresses}. At the beginning of our experiment, we did not account for the impact of backbone capacity. We scheduled the bandwidth in a manner analogous to the conventional $95^{th}$ percentile method. However, we found that the limited backbone capacity made it difficult for the bandwidth to converge at a PoP where some {\egresses} were planned to burst. This resulted in the planned bursting {\egresses} being unable to burst, wasting 5\% of the free time slots and potentially increasing the billable bandwidth of {\egresses}. The experiment shows that the total cost of outbound bandwidth is even worse than the baseline, which does not switch the traffic and keeps it intact. To address this issue, we introduce the default bandwidth of each PoP into our formulation. This allows us to consider which backbone can be allocated more bandwidth and which should be allocated less. We achieve a ratio of outbound bandwidth cost optimization of approximately 36\%. This result confirms that the limited capacity between PoPs inevitably impacts the bandwidth scheduling for {\egresses}}.
+\item{\para{Consideration of backbone link capacity insufficiency.} The assumption made in \cite{singh2021costCascara} presupposes that there is sufficient capacity between network nodes. empirical investigations conducted by network operators (Figure \ref{fig:backbone-lack}), reveal that the capacity of backbone links between PoPs is considerably limited compared to the default bandwidth available of PoPs and {\egresses}. At the beginning of our experiment, we did not account for the impact of backbone capacity. We scheduled the bandwidth in a manner analogous to the conventional $95^{th}$ percentile method. However, we found that the limited backbone capacity made it difficult for the bandwidth to converge at a PoP where some {\egresses} were planned to burst. This resulted in the planned bursting {\egresses} being unable to burst, wasting 5\% of the free time slots and potentially increasing the billable bandwidth of {\egresses}. The experiment shows that the total cost of outbound bandwidth is even worse than the baseline, which does not switch the traffic and keeps it intact. To address this issue, we introduce the default bandwidth of each PoP into our formulation. This allows us to consider which backbone can be allocated more bandwidth and which should be allocated less. We achieve a ratio of outbound bandwidth cost optimization of approximately 36\%. This result confirms that the limited capacity between PoPs inevitably impacts the bandwidth scheduling for {\egresses}}.
 
 
 \item
@@ -193,11 +197,11 @@ Second, efficiently using the available capacity of {\egress} (Figure \ref{fig:u
 \begin{figure}
     \centering
     \subfigure[Before optimization]{\label{fig:use-free-timeslots}
-    \includegraphics[width=3.9cm]{figs/implement/overallBeforeOpt.jpg}}
+    \includegraphics[width=3.9 cm]{figs/implement/overallBeforeOpt.pdf}}
     \quad
     \subfigure[After optimization]{\label{fig:use-95-timeslots}
-    \includegraphics[width=3.9cm]{figs/implement/overallPostOpt.jpg}}
-    \caption{Bandwidth distribution of different time slots before and post $95^{th}$ percentile charging bandwidth optimization for a specific {\egress}}
+    \includegraphics[width=3.9 cm]{figs/implement/overallPostOpt.pdf}}
+    \caption{\small Bandwidth distribution of different time slots before \ref{fig:use-free-timeslots} and after \ref{fig:use-95-timeslots} overall optimization for a {\egress}. We efficiently utilize 5\% of the bursting capacity time slots and capacity remaining under the estimated billable bandwidth ($p_i$) in 95\% of the time slots.}
     \label{fig:95-problem2}
 \end{figure}
 
@@ -217,19 +221,19 @@ Second, efficiently using the available capacity of {\egress} (Figure \ref{fig:u
 % {Additionally, we have compressed the time slots for the solution, and we have compressed the number of time slots from more than 8,000 time slots in a month to 288 time slots. This is because the $95^{th}$ percentile utilization prediction results of each {\egress} are most relevant to the trend of total bandwidth and are not sensitive to the specific number of time slots. The daily bandwidth trend of Huawei Cloud is basically stable over a month, and the trend is basically the same after the 8000 time slots in a month are sorted in descending order according to the traffic size and the 288 time slots in a day are sorted in descending order according to the traffic size. Moreover, the overall level is somewhat tolerant to the accuracy, and since the real traffic trend and the actual bandwidth trend are bound to be different, the time slot level will fine-tune some unreasonable $p_i$ accordingly, so we  carry out such a compression.}
 
 
-\para{Complexity Analysis}
+\para{Complexity Analysis} \label{sec:overall-complexity}
 % 总体层面挑战：求解器不可能在1H内完成千万级规模混合整数规划模型的求解
 % 时隙数量：8640
 % 变量数量：1500w+ 
 % 约束数量：3000w+
-Algorithm 1 considers the traffic generated within each PoP and the capacity constraints of the egress and backbone networks for all time slots in a month. Where the number of constraints reaches roughly O(n(|J|+|L|+|V|))
+Algorithm \ref{alg1} considers the traffic generated within each PoP and the capacity constraints of the egress and backbone networks for all time slots in a month. Where the number of constraints reaches roughly $O(n(|J|+|L|+|V|))$
 We provide the corresponding solution in Section \ref{sec:overall-slu}.
 
 \subsection{Time Slot Formulation}  \label{sec:timeslot-opt}
 
 The task of time slot optimization is to perform real-time flow scheduling in each time slot. Algorithm \ref{alg3} offers a formal description of the optimization problem. As we have done overall optimization scheduling the bandwidth across {\egresses}, time slot optimization is required to put specific flows onto the {\egresses} subject to the capacity constraints calculated by phase I. It is well-established that assigning flows to specific {\egresses} can be considered a generalized assignment problem (GAP) \cite{shmoys1993approximationGAP}, which has been proved an NP-hard combinatorial optimization problem and is typically solved as a MILP.
 
-This optimization aims to enhance the performance of performance-sensitive flows and simultaneously manage outbound costs at a lower level. 
+This optimization aims to improve the performance of performance-sensitive flows and simultaneously manage outbound costs at a lower level. 
 % 我们通过将流在 可用空间之下进行指派 从而保证出云成本的低水平
 % 算法的位置，ref 要改成后面的简略版本
 
@@ -237,7 +241,7 @@ This optimization aims to enhance the performance of performance-sensitive flows
 {In addition to the common input parameters about the WAN and the edge of the cloud. The data input is all related to the current time slot $t$, including $b^t_{u}$ and $F^t$. $b^t_{u}$ denoting Default bandwidth of PoP $u$ in time slot $j$ refers to the bandwidth of PoP $u$ before scheduling considering all flows egressing via their respective default {\egress}. We need $b^t_{u}$ when dealing with constraints about backbone capacity. $F^t=\{f^t\}$ denotes all the demand flows from the WAN in time slot $t$. $y^t_i$ is the maximal available bandwidth in time slot $t$ described in phase I input parameters.}
 
 
-\para{Decision variables.} The time slot optimization scheme assigns network flow to {\egresses} in $L$ in time slot $t$, $t\in[1,..,n]$. We introduce the decision variable $b^t_{(u,v)}$ to represent the bandwidth allocation on backbone link $(u,v)$ from PoP $u$ to PoP $v$ in time slot $t$. The binary decision variable $x_{(u,v)}^{f^{t}}$ indicates whether flow $f$ egresses through {\egress} $l_i$ within time slot $t$, and the binary decision variable $x_i^{f^{t}}$ indicates whether it traverses backbone link $(u,v)$ within time slot $t$.
+\para{Decision variables.} The time slot optimization scheme assigns network flow to {\egresses} in $L$ in time slot $t$, $t\in[1,..,n]$. We introduce the decision variable $b^t_{(u,v)}$ to represent the bandwidth allocation on backbone link $(u,v)$ from PoP $u$ to PoP $v$ in time slot $t$. The binary decision variable $x_i^{f^{t}}$ indicates whether flow $f$ egresses through {\egress} $l_i$ within time slot $t$, and the binary decision variable $x_{(u,v)}^{f^{t}}$ indicates whether it traverses backbone link $(u,v)$ within time slot $t$.
 
 
 
@@ -261,13 +265,13 @@ $$\min\sum_{l_i \in L} c_i \cdot p_i^t+\sum_{f^t \in F_s} w_1\left(V_f\right) x_
 \item \para{Assigning flows according to {\egress}'s billable bandwidth} The output of the flow assignment time slot optimization must adhere to the billable bandwidth constraints established during the overall optimization phase. It is crucial because the overall optimization strategy meticulously schedules bandwidth allocation to ensure that {\egresses} peak at the appropriate time slots, thereby minimizing outbound bandwidth costs.
 
 \item \para{Deliberating the selection of bursting {\egresses}.}
-As we discussed in the overall optimization, we incur the backbone constraints in computing each {\egress}'s estimated billable bandwidth. We adopt the heuristics akin to those found in \cite{singh2021costCascara,goldenberg2004optimizing} to select which {\egresses} is going to burst in the current time slot. However, the ratio of optimizing bandwidth cost was consistently approximately 4\%-7\% which confused us a lot. We found subsequently that the chosen {\egresses} may not be able to burst as we anticipate. The reason is that the limited incoming backbone capacity at the PoP results in poor incoming traffic, which cannot ensure the {\egresses} on the PoP burst up to a high bandwidth level. This must waste the number of 5\% free time slots to accommodate peak traffic. Thereby {\egresses} may encounter a shortage of available bursting time slots, necessitating an increase in billable bandwidth when facing peak traffic in the future. This, in turn, leads to elevated bandwidth costs. This drives us to formalize the selection of bursting {\egresses} and assignment of flows together. Notably, this insight motivates us to decompose the problem of time slot optimization into the subproblem of selecting bursting {\egresses} and heuristic to assign flows later \ref{Solving Optimization Quickly}. We achieve a ratio of outbound bandwidth cost optimization of approximately 36\% eventually, which reveals that deliberating the selection of bursting {\egresses} is much more important than we thought.
+As discussed in our overall optimization phase, we encounter backbone constraints while calculating the estimated billable bandwidth for each {\egress}. To address this, we employ heuristics similar to those described in \cite{singh2021costCascara,goldenberg2004optimizing} to determine which {\egress} should burst during the current time slot.  However, we were confused by the consistently low bandwidth cost optimization ratio of approximately 4\%–7\%. Subsequently, we discovered that the selected {\egresses} may not be able to burst as expected due to limited incoming backbone capacity at the PoP, resulting in inadequate incoming traffic to support the desired burst levels for {\egresses} at the PoP. This must waste the number of 5\% free time slots to accommodate peak traffic. Thereby {\egresses} may encounter a shortage of available bursting time slots, necessitating an increase in billable bandwidth when dealing with peak traffic in the future. This, in turn, leads to elevated bandwidth costs. This realization prompts us to formalize the selection of bursting {\egresses} and assignment of flows together. Notably, this insight motivates us to decompose the time slot optimization problem into two subproblems: selecting bursting {\egresses} and employing heuristics for flow assignment, as detailed in \S\ref{Solving Optimization Quickly}. Ultimately, We achieve a ratio of outbound bandwidth cost optimization of approximately 36\% eventually, which reveals that deliberating the selection of bursting {\egresses} is much more critical than initially anticipated.
 
 \end{itemize}
 
 \para{Complexity Analysis.}
 % 时隙层面挑战：求解器不可能在10s内完成亿级规模混合整数规划模型的求解
-In Algorithm \ref{alg3}, constraints are imposed to ensure that the total flow bandwidth for each {\egress} and each backbone does not surpass the capacity limit. Consequently, the total number of constraints in Algorithm \ref{alg3} amounts to $O(|F|\dot (|E|+m))$, where $|F|$ represents the number of flows. In our testing topology, considering 2 million flows per time slot, Algorithm \ref{alg3} is projected to involve approximately 200 million constraints and 2 billion decision variables. {\sys} plans to conduct flow scheduling every five minutes, representing one time slot. This process encompasses actions such as data collection and command issuance. As a result, it's essential to maintain the algorithm's execution time at approximately 10 seconds per time slot. Although the linear programming solver can give an optimal solution, it is extremely slow and takes close to 1 minute just to schedule 10,000 flows. Therefore, the solver alone cannot meet our goal of scheduling 200 million flows per time slot. We provide the corresponding solution in Section \ref{sec:timeslot-slu} and Section \ref{sec:Network Slicing}.
+In Algorithm \ref{alg3}, constraints are imposed to ensure that the total flow bandwidth for each {\egress} and each backbone does not surpass the capacity limit. Consequently, the total number of constraints in Algorithm \ref{alg3} amounts to $O(|F|\dot (|E|+m))$, where $|F|$ represents the number of flows. In our testing topology, considering 2 million flows per time slot, Algorithm \ref{alg3} is projected to involve approximately 200 million constraints and 2 billion decision variables. {\sys} plans to conduct flow scheduling every five minutes, representing 1 time slot. This process encompasses actions such as data collection and command issuance. As a result, it's essential to maintain the algorithm's execution time at approximately 10 seconds per time slot. Although the linear programming solver can give an optimal solution, it is extremely slow and takes close to 1 minute just to schedule 10,000 flows. Therefore, the solver alone cannot meet our goal of scheduling 200 million flows per time slot. We provide the corresponding solution in Section \ref{sec:timeslot-slu} and Section \ref{sec:Network Slicing}.
 
 %时隙数量：200w+
 %变量数量：20亿+ 
@@ -277,16 +281,26 @@ In Algorithm \ref{alg3}, constraints are imposed to ensure that the total flow b
 
 \section{Overall Optimization}\label{sec:overall-slu}
 % 优化思路：通过对总流量排序后滑窗采样，降低模型规模，实现20min内求解
-We have demonstrated the decomposition of our inter-domain TE optimization problem and the challeges in practice. In this section we discuss the solutions for the large-scale computation of routings.
+The purpose of overall optimization is to preliminarily optimize the total outbound bandwidth cost and to compute the suitable estimated billable bandwidth of each {\egress}, which are then transmitted to the time slot optimization to constraint the traffic allocation of each {\egress}. While we are willing to accept an extended runtime for the overall optimization execution, the complexity of overall optimization (\S\ref{sec:overall-complexity}) makes the problem unsolvable. In order to solve the overall optimization in a limited time (generally a day), we need to make some compromises to reduce the scale of the problem. Our analysis has revealed that the problem's complexity is closely tied to the number of time slots and the number of {\egresses} involved. While reducing the number of {\egress} is a challenging prospect since each egress point must allocate a $p_i$, we are exploring the possibility of mitigating complexity by limiting the number of time slots. As a result, our acceleration of overall optimization is to reduce the number of time slots by using window sampling of the sorted demand curve. 
+
+\para{Accuracy of $\{p_i\}$ is not so critical.} Scheduling optimization is an online optimization without observing the future demand curve and the $95^{th}$ percentile bandwidth cost is calculated by time slots of the whole month. So it is intuitive that no matter how good the predictor is, all the online optimization cannot get the theoretical optimal solution. As a result, the accuracy of calculating the estimated billable bandwidth $\{p_i\}$ is not very critical. We can sacrifice a little bit of accuracy to gain a huge acceleration. 
+
+\para{Bandwidth trend is more related.} By analyzing the $95^{th}$ percentile problem, 
+
+% 不需要过于精准
+
+
+
+We have demonstrated the decomposition of our inter-domain TE optimization problem and the challenges in practice. In this section, we discuss the solutions for the large-scale computation of routings.
 
 
 \section{Timeslot Optimization}\label{sec:timeslot-slu}
 % 要说一下 time slot 的那个形式化根本解不了
-The main objective of the Timeslot Optimization is that we maintain the execution time of the algorithm in O(1) min. To this end, we introduce two optimization approachs. 
+The main objective of the Timeslot Optimization is that we maintain the execution time of the algorithm in O(1) min. To this end, we introduce two optimization approaches. 
 
 \begin{itemize}[leftmargin=*]  
-\item \textbf{Optimization \#1: Only performance-aware flows and large flows are scheduled (\S\ref{Scale Characteristics}).} By observing the characteristics of the traffic distribution in the outgoing cloud, we find that we do not need to schedule all the flows and still achieve a sub-optimal objective. This optimization reduces the burden on the algorithm and also mitigates the problems of packet loss rate and increased latency caused by too much traffic scheduling. 
-\item \textbf{Optimization \#2: Traffic is allocated to each PoP first then flows are scheduled. (\S\ref{Solving Optimization Quickly}).} We decompose the scheduling problem at the time slot level into a burst decision problem and a heuristic scheduling problem. The burst problem is still a linear programming problem, but its constraint variables are independent of the number of flows and are only related to the number of PoPs, the number of backbone links, and the number of {\egresses}, which has a good scalability. Flows are then scheduled by a heuristic method.
+\item \textbf{Optimization \#1: Only performance-aware flows and large flows are scheduled (\S\ref{Scale Characteristics}).} By observing the characteristics of the outbound traffic distribution, we find that we do not need to schedule all the flows and still achieve a sub-optimal objective. This optimization reduces the burden on the algorithm and also mitigates the problems of packet loss rate and increased latency caused by too much traffic scheduling. 
+\item \textbf{Optimization \#2: Traffic is allocated to each PoP first then flows are scheduled. (\S\ref{Solving Optimization Quickly}).} We decompose the scheduling problem at the time slot level into a burst decision problem and a heuristic scheduling problem. The burst problem is still a linear programming problem, but its constraint variables are independent of the number of flows and are only related to the number of PoPs, the number of backbone links, and the number of {\egresses}, which has good scalability. Flows are then scheduled by a heuristic method.
 \end{itemize}
 
 \subsection{Scale Characteristics} \label{Scale Characteristics}
@@ -295,13 +309,13 @@ The main objective of the Timeslot Optimization is that we maintain the executio
 % Cloud networks occupy a central position in the Internet ecosystem due to the large volume and variety of popular content they serve to users. To make this possible, cloud providers  peer with a large number of networks or Autonomous Systems (ASes) on the Internet, including transit ISPs and eyeball networks.
 
 
-We go over the distribution of the bandwidth of the different flows based on a week's worth of flow data collected for each time slot (from May 22, 2023 to May 28, 2023) for the {\egresses} on the existing network. As show in Figure \ref{fig:distriFlow}, that the flows utilizing 94.21\% of the total bandwidth comprise only 0.91\% of the overall flow count. In addition, we find that roughly 4.5\% of the total flows are performance-aware, accounting for approximately 0.8\% of the total bandwidth across all flows. 
+We go over the distribution of the bandwidth of the flows based on a week's worth of flow data collected for each time slot (from May 22, 2023 to May 28, 2023) on the existing network. As shown in Figure \ref{fig:distriFlow}, the flows utilizing 94.21\% of the total bandwidth comprise only 0.91\% of the overall flow count. In addition, we find that roughly 4.5\% of the total flows are performance-aware, accounting for approximately 0.8\% of the total bandwidth across all flows. 
 
-\para{Key insights.} The final total cost is not related to the number of flows, but only to the bandwidth of the flows. From the characteristics of the flows, we find that a small number of large flows actually occupy the vast majority of the bandwidth. If only these large flows are scheduled, not only can the number of flows that need to be scheduled be drastically reduced, but at the same time the cost optimization is not significantly affected. Furthermore, given the relatively small proportion of performance-aware flows in the total flow count and our focus on performance optimization, we have included these flows in the scheduling process as well. In summary, we filter non-performance-aware small flows.
+\para{Key insights.} The final total cost is not related to the number of flows, but only to the bandwidth of the flows. From the characteristics of the flows, we find that a small number of large flows occupy the vast majority of the bandwidth. If only these large flows are scheduled, not only can the number of flows that need to be scheduled be drastically reduced, but at the same time the cost optimization is not significantly affected. Furthermore, given the relatively small proportion of performance-aware flows in the total flow count and our focus on performance optimization, we have included these flows in the scheduling process as well. In summary, we filter non-performance-aware small flows.
 
-We designed a hyperparameter $FT$ to represent the filtering bandwidth threshold and we will discuss it in Section \ref{Evaluation}. Specifically, in the data collection phase, we will ignore all non-performance-aware flows with bandwidth less than $FT$. These flows will directly reach their current destination {\egresses}. After filtration with a proper $FT$ , the number of flows is reduced to about 1 per cent of its original size.
+We designed a hyperparameter $FT$ to represent the filtering bandwidth threshold. Specifically, in the data collection phase, we will ignore all non-performance-aware flows with bandwidth less than $FT$. These flows will directly reach their current destination {\egresses}. After filtration with a proper $FT$, the number of flows is reduced to about 1 percent of its original size.
 
-There are many benefits of filtering flows. Firstly, the system reduces the overhead of data collection, and the size of the flow data information that needs to be transmitted is reduced to about 1\% of its original size. Secondly, our algorithm reduces the time needed for scheduling. Faced with the size of 200 million flows, it is difficult to schedule all the flows within 10 seconds, even using heuristics. The reduction in the number of flows makes the algorithm runtime requirement possible. In addition, the reduction in the number of flows to be scheduled means that problems such as packet loss rate and increased latency caused by scheduling will be reduced. Choosing a proper hyperparameter $FT$ for filtering will not significantly reduce the effectiveness of the cost optimization, as we will show in Section \ref{Cost Optimization}.
+There are many benefits of filtering flows. Firstly, with a proper $FT$, the system reduces the overhead of data collection, and the size of the flow data information that needs to be transmitted is reduced to about 1\% of its original size. Secondly, our algorithm reduces the time needed for scheduling. Faced with the size of 200 million flows, it is difficult to schedule all the flows within 10 seconds, even using heuristics. The reduction in the number of flows makes the algorithm runtime requirement possible. In addition, the reduction in the number of flows to be scheduled means that problems such as packet loss rate and increased latency caused by scheduling will be reduced. Choosing a proper hyperparameter $FT$ for filtering will not significantly reduce the effectiveness of the cost optimization, as we will show in Section \ref{Cost Optimization}.
 
 % \begin{figure}
 % 	\centering
@@ -318,7 +332,7 @@ There are many benefits of filtering flows. Firstly, the system reduces the over
     \quad
     \subfigure[Distribution of performance-aware flows by bandwidth]{
     \includegraphics[width=3.9cm]{figs/implement/bigflowdistribution-2.pdf}}
-    \caption{Bandwidth distribution of outgoing cloud traffic in a specific time slot}
+    \caption{\small Bandwidth distribution of outbound traffic in a specific time slot}
     \label{fig:distriPerfFlow}
     \label{fig:distriFlow}
 \end{figure}
@@ -328,7 +342,7 @@ There are many benefits of filtering flows. Firstly, the system reduces the over
 \subsection{Solving Optimization Quickly} \label{Solving Optimization Quickly}
 % 是否应该把总体层面的加速 也放到这章？
 
-In this section, we propose a time slot level problem decomposition method. The method decomposes the original linear programming problem into a new linear programming problem and a heuristic method, which greatly improves the scheduling efficiency. The new linear programming problem has better scalability because the decision variables are independent of the number of flows.
+In this section, we propose a time slot level problem decomposition method. The method decomposes the original problem by transforming the linear programming problem, which involves simultaneous {\egress}  burst decisions and flow scheduling, into two distinct components: a new simplified linear programming problem concerning {\egress} burst decisions and a flow heuristic scheduling problem. The new linear programming problem has better scalability because the decision variables are independent of the number of flows.
 
 % The main challenges are:
 
@@ -337,29 +351,30 @@ In this section, we propose a time slot level problem decomposition method. The 
 \para{Key insights.} We integrate the considerations of algorithmic complexity at the time slot level with specific scenarios to summarize the following pivotal insights:
 
 \begin{itemize}
-\item \para{Schedule the traffic first and then schedule the specific flows.} The reason for the high complexity of Algorithm \ref{alg3} is that it schedules every flow. If it is assumed that each flow can be divided at any granularity according to the bandwidth, then the complexity of the algorithm at the time slot level is independent of the number of flows. Finally, we can do heuristic scheduling for the flows and transform the scheduling problem into a bin packing problem. This assumption is validated by the efficiency of the greedy algorithm for the bin packing problem, particularly when a significant portion of the items is of small size, enabling the algorithm to achieve high approximation ratios. As we mentioned in Section \ref{Scale Characteristics}, the characteristics of the flows exactly satisfy this property.
-\item \para{Considering the capacity constraints of the backbone network in conjunction with the burst decision problem.} When all egresses within a Point of Presence (PoP) reach full capacity, the remaining flows must be directed to egresses in other PoPs. Determining the appropriate backbone for each flow and deciding which PoP to schedule it to presents a complex challenge. Directly applying heuristics to schedule flows might lead to instances where the backbone capacity is inadequate, resulting in these flows being unable to find a feasible {\egress}. Therefore, we opted to utilize an intermediate variable from the burst decision problem, specifically the used capacity of each backbone link, to guide the heuristic scheduling process.
+\item \para{Allocate bandwidth first, then schedule the flows.} The reason for the high complexity of Algorithm \ref{alg3} is that it schedules every flow. Therefore, we aggregate all flows together and divide the total bandwidth into {\egress} and backbone links with arbitrary granularity so that the constraint variables of the linear programming problem at the time slot level are independent of the number of flows. Finally, we can do heuristic scheduling for the flows and transform the scheduling problem into a bin packing problem. This assumption is validated by the efficiency of the greedy algorithm for the bin packing problem, particularly when a significant portion of the items is of small size, enabling the algorithm to achieve high approximation ratios. As we mentioned in Section \ref{Scale Characteristics}, the characteristics of the flows exactly satisfy this property.
+\item \para{Consider the capacity constraints of the backbone network in conjunction with the burst decision problem.} When all {\egresses} within a PoP reach full capacity, the remaining flows must be directed to {\egresses} in other PoPs. Determining the appropriate backbone for each flow and deciding which PoP to schedule it to presents a complex challenge. Directly applying heuristics to schedule flows might lead to instances where the backbone capacity is inadequate, resulting in these flows being unable to find a feasible {\egress}. Therefore, we opted to utilize an intermediate variable from the burst decision problem, specifically the used capacity of each backbone link, to guide the heuristic scheduling process.
 \end{itemize}
 
 % {We find that to utilize the $P_i$ of {\egresses} solved in the overall optimization, we have to fully utilize the limited backbone links. In addition, the selection of the burst {\egress} in each time slot is also a problem, both in terms of making the wastage of {\egress} bandwidth in each time slot as small as possible in order to save cost, and ensuring that after the selected {\egress} bursting, the flows in each PoP can be scheduled as much as possible and meet the capacity constraints of the backbone network. Therefore, we believe that the burst problem is closely related to the backbone capacity constraint problem. We design a method that gives the backbone physical link usage suggestions when making the burst decision, and meets the scalability at the same time, which means the complexity of the algorithm is independent of the number of flows. Specifically, we formalize the burst problem and the backbone limit uniformly, and the formalization is only related to the number of PoPs and the number of backbone links. After we solve this formalized problem using the solver, we are able to obtain not only the burst {\egresses} in each time slot, but also recommendations for the use of each physical link of the backbone network. Based on these recommendations, inter-PoP flow scheduling is performed to fully utilize the bandwidth of the backbone network.}
 
-{In summary, the algorithm at the time slot level should be able to satisfy the performance needs and total cost of each {\egress} as low as possible after scheduling, while also considering the algorithm efficiency and scalability when the scale increases in the future. {\sys} time slot level algorithm takes these two problems into account and it can make parallel scheduling simple.}
+{In summary, the algorithm at the time slot level should be able to satisfy the performance needs and total cost of each {\egress} as low as possible after scheduling, while also considering the algorithm efficiency and scalability when the scale increases in the future. Our time slot level algorithm takes these two problems into account and it can make parallel scheduling simple.}
 
 % \subsubsection{Choosing burst links}
 
-{\para{{\Egress} burst decision.} Due to the capacity constraints of the backbone network, the {\egress} burst decision problem is difficult to get an optimal solution using heuristics. In order to find an optimal and maintain good performance and scalability, the problem can be formalized as Algorithm \ref{alg4}}.
+{\para{{\Egress} burst decision.} Inter-PoP flow scheduling faces substantial constraints due to the limited capacity of the backbone links. Consequently, if heuristic egress burst decisions are made, it can result in a dual challenge: a considerable amount of unutilized egress capacity and potential difficulties in scheduling flows from other PoPs to the PoP where the burst egress is situated, all within the confines of the constrained backbone links. To find an optimal and maintain good performance and scalability, the problem can be formalized as Algorithm \ref{alg4}}.
 
-{On the one hand, the scheduling granularity is transformed into the bandwidth granularity. Therefore, the solver only needs to count the current sum of flow bandwidths in each PoP, independent of the number of flows, which ensures the high performance and scalability of the solver. On the other hand, the objective function ensures that the capacity wastage of all the {\egresses} is as low as possible, which can ensure that the burst capacity is fully utilized, which is conducive to reducing the final costs.}
+On one hand, the scheduling granularity is translated into bandwidth granularity. Consequently, the solver only needs to count the sum of flow bandwidth in each PoP, independent of the number of flows. This ensures the solver's high performance and scalability. On the other hand, the objective function is designed to minimize the 
+unutilized capacity of all {\egresses} as much as possible, which contributes to cost optimization.
 
 % \subsubsection{From underlay to overlay}
 
-{\para{Determining the virtual link bandwidth for inter-PoP scheduling.} We find that to effectively reduce the final cost, the capacity of the backbone network must be utilized. This is because the guaranteed bandwidth of the {\egress} of some PoPs is already sufficient to accommodate all the traffic within the PoP, while the traffic of some PoPs may be higher than the sum of the $p_i$ of the {\egress}s within the PoP. For this reason, we utilize the intermediate result of the burst decision problem in the first step: the usage of each backbone link. This result actually represents the amount of bandwidth per backbone that should be used by the solver in obtaining the optimal burst {\egress}, which we refer to as the recommended bandwidth of the physical links of the backbone. We want to use this result to guide how much bandwidth flows should be scheduled between PoPs. So the purpose of the second step is to get the recommended bandwidth of the virtual links between PoPs based on the recommended bandwidth of the physical links of the backbone network.}
+{\para{Determining the virtual link bandwidth for inter-PoP scheduling.} We observe that to efficiently minimize the ultimate cost, optimal utilization of the backbone network's capacity is essential. This is due to instances where the cumulative estimated billable bandwidth $p_i$ of all {\egresses} within a PoP might be lower than the combined flow bandwidths within that PoP. In such cases, the flows within that PoP will require scheduling to other PoPs. To address this issue, we leveraged the intermediate results of the burst decision problem in the above step: the utilization capacity of each backbone link. This outcome represents the amount of capacity per physical backbone link that the solver should use to obtain the optimal burst results, denoted as the recommended bandwidth of the physical backbone links. Our objective is to utilize this outcome to guide bandwidth scheduling between PoPs. Therefore, the goal of this is to determine the recommended bandwidth of the virtual links between PoPs based on the recommended bandwidth of the physical backbone network links.}
 
 {This problem can be modeled as the following: each PoP can be regarded as a vertex and the backbone network physical links can be regarded as edges. We use vertex $u$ to denote PoP $u$, edge $(u,v)$ to denote the backbone physical link from PoP $u$ to PoP $v$, $w_u$ to denote the total bandwidth of the current flow of PoP $u$, $w_{(u,v)}$ to denote the suggestion bandwidth of the backbone physical link from PoP $u$ to PoP $v$, and $G=(V, E)$ to denote the directed graph constructed by the above method. This algorithm can be described as the following steps:}
 
 \begin{itemize}[leftmargin=*] 
 \item[1] Confirm how much bandwidth each PoP needs to flow in/out. The bandwidth $O_u$ that $pop_u$ needs to flow out can be expressed as $O_u=\sum_{v\in V} |w_{(u,v)}-w_{(v,u)}| $. If the value is negative, it means that $pop_u$ requires inflow bandwidth.
-\item[2] Sort $O_u$ from largest to smallest. That is, we should try to consider those PoPs with the largest outflow requirements first. Because we want to get as few virtual links as possible, and the scheduling of PoP-to-PoP flows is as centralized as possible.
+\item[2] Sort $O_u$ from largest to smallest. That is, we should try to consider those PoPs with the largest outflow requirements first. Because we want to get as few virtual links as possible, and the scheduling of PoP-to-PoP flows to be as centralized as possible.
 \item[3] Consider the PoP with the largest $O_u$ each time, and bisect the largest flow that this PoP can schedule this time, denoted as $B$. After that, recursively start from point $u$ in the graph $G$, and each time choose an outgoing edge with the largest $w_{(u,v)}$ that is not smaller than $B$ until we find a point $p$ satisfying $-O_p\ge M$, which indicates that a flow of size $B$ can be scheduled from PoP $u$ to PoP $p$. Adjust the bisecting pointer to find the maximum feasible $B$. Then record the suggested bandwidth $F_{(u,p)}+=M$ for the virtual link from PoP $u$ to PoP $p$. And set $w_u-=M,w_p+=M$, and the edge weights of all edges on the path are subtracted from $B$.
 \item[4] Keep doing step 3 until $w_u=0$ for any $u\in V$.
 \end{itemize}
@@ -368,11 +383,13 @@ In this section, we propose a time slot level problem decomposition method. The 
 
 % \subsubsection{Heuristic assignment}
 
-{\para{Heuristic scheduling.} Heuristic scheduling requires the use of the suggested bandwidth of the virtual link solved in the previous step. The principle is to make the actual used capacity of the virtual links equal to the recommended capacity as much as possible, so the algorithm needs to perform inter-PoP scheduling first. Since the number of performance-aware flows is small and the bandwidth is generally small, and the inter-PoP latency is high and the performance-aware flows tend to be scheduled within its orginal PoP, it is sufficient to schedule the performance-aware flows directly to the feasible {\egress} with the greatest performance (i.e. find the smallest {\egress} $l_i$ minimize the $perf$ function in Algorithm \ref{alg3}). The scheduling only needs to consider not exceeding the capacity limit of each {\egress} and not exceeding the recommended bandwidth limit of the inter-PoP virtual links.}
+{\para{Heuristic scheduling.} Heuristic scheduling requires the use of the suggested bandwidth of the virtual link solved in the previous step. The principle is to make the actual used capacity of the virtual links equal to the recommended capacity as much as possible, so the algorithm needs to perform inter-PoP scheduling first. Since the number of performance-aware flows is small and the bandwidth is generally small, and the inter-PoP latency is high and the performance-aware flows tend to be scheduled within their original PoP, it is sufficient to schedule the performance-aware flows directly to the feasible {\egress} with the greatest performance (i.e. find the smallest {\egress} $l_i$ minimize the $perf$ function in Algorithm \ref{alg3}). The scheduling only needs to consider not exceeding the capacity limit of each {\egress} and not exceeding the recommended bandwidth limit of the inter-PoP virtual links.}
 
-{Then the other non-performance-aware flows are scheduled, which can be regarded as a bin packing problem and the these flows need to be sorted from largest to smallest according to the bandwidth before scheduling, so that they can better fill up the {\egress} capacity and the suggested bandwidth of the virtual links as much as possible. Then, priority is given to ensure that links across the PoP are filled before scheduling flows within the PoP. After enumerating all the flows, there may be a remaining fraction of flows that cannot find a feasible {\egress}.}
+{Then the other non-performance-aware flows are scheduled, which can be regarded as a bin packing problem and these flows need to be sorted from largest to smallest according to the bandwidth before scheduling, so that they can better fill up the {\egress} capacity and the suggested bandwidth of the virtual links as much as possible. Then, priority is given to ensure that links across the PoP are filled before scheduling flows within the PoP.}
 
-{\para{Increasing $p_i$}. After heuristic scheduling, the total bandwidth of the remaining flows is often very small (typically less than 0.1Gbps in tests), so this step does not significantly increase the $p_i$ of a particular {\egress}. This step requires the remaining flows to be placed to a {\egress} that minimizes the cost of increasing the $p_i$ of the {\egress} after the flows have been placed to that {\egress}. The backbone physical link limitation problem can be considered by subtracting the recommended bandwidth given in the first step from the capacity of the backbone physical link, which is the available bandwidth at this time. When cross-PoP scheduling, determine whether the available bandwidth of the physical link between the two PoPs is greater than the bandwidth of the flow to determine whether the flow can be scheduled between the two PoPs.}
+{The heuristic scheduling }
+
+{\para{Increasing $p_i$}. After heuristic scheduling, there may be a remaining fraction of flows with small total bandwidth (typically less than 0.1Gbps in tests) that cannot find a feasible {\egress}. This step requires the remaining flows to be placed to a {\egress} that minimizes the cost of increasing the $p_i$ of the {\egress} after the flows have been placed to that {\egress}. The backbone physical link limitation problem can be considered by subtracting the recommended bandwidth given in the first step from the capacity of the backbone physical link, which is the available bandwidth at this time. When cross-PoP scheduling, determine whether the available bandwidth of the physical link between the two PoPs is greater than the bandwidth of the flow to determine whether the flow can be scheduled between the two PoPs.}
 
 
 
@@ -440,7 +457,7 @@ In this section, we propose a time slot level problem decomposition method. The 
 
 \section{Implementation} 
 \subsection{Distributed Implementation of Controllers}\label{sec:Network Slicing}
-In order to enhance the efficiency of the flow scheduling algorithm and reduce the time overhead associated with data collection and result dissemination, we implement network slicing. This approach enables each PoP to autonomously handle flow data collection, optimal scheduling computation, and scheduling result dissemination. Consequently, this significantly enhances the scalability of the system.
+To improve the efficiency of the flow scheduling algorithm and reduce the overhead of data collection and result dissemination, we implement network slicing. This approach enables each PoP to autonomously handle flow data collection, optimal scheduling computation, and scheduling result dissemination. Consequently, this significantly improves the scalability of the system.
 % potential 演进成多控制器架构
 % The time slot level consists of two subproblems, namely, performance flow assignment and cost flow assignment under the constraints of backbone link capacity and egress planning capacity. Therefore, we can formalize the time slot level problem as a generalized assignment problem, which is also an integer linear programming problem. There are three ways to speed up a mixed-integer programming problem: (i) Benders decomposition, (ii) Dantzig-Wolfe decomposition, and (iii) Lagrangian relaxation. However, none of them can guarantee that the computation rate can be faster than that of the original problem solved by the direct branch-and-bound method, so it is hoped to utilize the egress flow's own scheduling preferences and distributions at the edge of the cloud to assist in slicing up the original problem, so that the original problem can be sliced up into multiple sub-problems to accelerate the search for the optimal solution. 
 
@@ -448,7 +465,7 @@ In order to enhance the efficiency of the flow scheduling algorithm and reduce t
 
 % As mentioned above we perform a problem decomposition of the time slot level problem by into the egress topping decision under backbone network constraints and the flow egress assignment problem. In this case, the egress topping decision under backbone constraints is made by scheduling the bandwidth to minimize the wasted egress topping capacity of the egresses, and ultimately outputs which egresses are egressing and how much bandwidth is allocated to the physical backbone links (the physical backbone recommended bandwidth). Then by transforming the suggested bandwidth of the physical backbone network into the capacity of one of the virtual backbone network. The purpose of our transformation is so that the capacity of the two virtual links do not affect each other (allocating bandwidth on one virtual link does not affect the other). And, the bandwidth of the one-hop virtual backbone between the two PoPs must be unidirectional (counting only the net incoming or net outgoing bandwidth). This gives us a good opportunity to perform the finest granularity of slice parallelism, i.e., slice by PoP. Streams passed between slices are selected according to the already set outgoing bandwidth (streams will prefer to exit from the default egress because it is important to make sure that streams cannot be dispatched frequently).
 
-When deploying our scheduling algorithm, we need to do network slicing first. Network slicing entails dividing the entire network into parts, each of which is individually controlled by a controller. Each controller runs our scheduling algorithm and schedules only the traffic within the corresponding slice of that controller. Due to the excessive amount of flow data in the whole network, if only one controller is used for scheduling without network slicing, the process of collecting the flow data and the process of sending the scheduling result will take up a large amount of network overheads and time overheads. After network slicing, each controller only needs to collect traffic data within the slice and schedule intra-slice flows. The data that each controller needs to collect and transmit is greatly reduced, making network slicing necessary.
+When deploying our scheduling algorithm, we need to do network slicing first. Network slicing entails dividing the entire network into parts, each of which is individually controlled by a controller. Each controller runs our scheduling algorithm and schedules only the traffic within the corresponding slice of that controller. Due to the excessive amount of flow data in the whole network, if only one controller is used for scheduling without network slicing, the process of collecting the flow data and the process of sending the scheduling result will take up a large number of network overheads and time overheads. After network slicing, each controller only needs to collect traffic data within the slice and schedule intra-slice flows. The data that each controller needs to collect and transmit is greatly reduced, making network slicing necessary.
 
 This section describes how our algorithm works well for parallel scheduling of flows. We will show that this parallel scheduling approach has great potential to be well applied to scheduling after network slicing. 
 
@@ -472,7 +489,7 @@ This section describes how our algorithm works well for parallel scheduling of f
 % Input the topology of the entire network and the recommended bandwidth to pass on the backbone link calculated in step 2, thus outputting the capacity of the virtual backbone link for one hop between each PoP. The time complexity of the algorithm is expected to be $O(n^2 m log(\max{O_u}))$, where n denotes the number of PoPs and m denotes the number of physical backbone links. And since the algorithm is not related to the specific flow but only related to the bandwidth, it has good scalability and does not need to be parallelized.
 
 \para{Slicewise parallel scheduling.}
-Slicewise parallel scheduling consists of two steps: inter-PoP scheduling and intra-PoP scheduling. Figure \ref{fig:network slicing} gives an example of slicewise parallelization. After getting the bandwidth of the virtual links between PoPs, the initial step is to conduct inter-PoP scheduling to ensure optimal utilization of the capacity across all virtual links. The process can be easily parallelized efficiently. We assign a thread to each PoP for scheduling flows from that PoP to other PoPs to fill the capacity of the virtual link. In this step, we only schedule non-performance-aware flows into other PoPs without specifying specific {\egress}. Subsequently, each PoP schedules the current flow within its domain to the suitable {\egress}, utilizing the heuristic scheduling strategy outlined in Section \ref{Solving Optimization Quickly}. To enhance the efficiency of the scheduling algorithm, multiple threads can be designated to each PoP for concurrent scheduling.
+Slicewise parallel scheduling consists of two steps: inter-PoP scheduling and intra-PoP scheduling. Figure \ref{fig:network slicing} gives an example of slicewise parallelization. After getting the bandwidth of the virtual links between PoPs, the initial step is to conduct inter-PoP scheduling to ensure optimal utilization of the capacity across all virtual links. The process can be easily parallelized efficiently. We assign a thread to each PoP for scheduling flows from that PoP to other PoPs to fill the capacity of the virtual link. In this step, we only schedule non-performance-aware flows into other PoPs without specifying specific {\egress}. Subsequently, each PoP schedules the current flow within its domain to the suitable {\egress}, utilizing the heuristic scheduling strategy outlined in Section \ref{Solving Optimization Quickly}. To improve the efficiency of the scheduling algorithm, multiple threads can be designated to each PoP for concurrent scheduling.
 
 \para{Network slicing.}
 Inspired by the above parallelization method, we propose a simple and efficient network slicing model. One option is that we divide each PoP into a slice, the controllers within each slice run our algorithms individually, and there exists a master controller to issue commands. Initially, controllers within each PoP independently calculate the total traffic within their respective domains and then upload these results to the master controller. The master controller makes the {\egress} burst decision and allocates the virtual link capacity between PoPs. Subsequently, the master controller communicates the virtual link capacity to the controllers within each PoP. Lastly, controllers within each PoP finalize the flow scheduling using a process akin to the parallel algorithm. The described slicing scheme offers the advantage of being straightforward, efficient, and easily implementable without causing undue inter-controller message transmission overheads. Since the capacity of the backbone is very limited and the algorithm greedily fills the virtual link capacity with large flows, the number of flows scheduled between PoPs will not be very large (typically less than 20,000 in tests). Moreover, for specific scenarios where it is desirable to incorporate multiple PoPs as a single slice, the slice scheme outlined above can be conveniently adjusted.
@@ -490,7 +507,7 @@ Inspired by the above parallelization method, we propose a simple and efficient 
 
 
 \subsection{Routing Table Compression}
-{\sys} uses compact data structures and efficient algorithms (\S \ref{sec:scheduling}) to flexibly forward traffic. The following problem is large scale ipv4, ipv6 routes. {\sys} was responsible for routing datacenter prefixes only, which were few enough for all SWAN routers to run BGP and store the datacenter routing tables in the router memory. {\sys} routers had to contend with Internet routing tables and it would be cost prohibitive to make every {\sys} router hold the entire Internet routing table.  Each entry in the raw routing table consists of a prefix and a series of routing information (e.g., next hop, origin, as path, and etc.), so a single 64GB router can store about only 15 million raw routing entries. Hence, {\sys} assigned two roles to routers: (1) aggregation routers that hold full IP routing tables, and (2) backbone routers that act as forwarding only nodes that do not run BGP. We develop a new SDN function in {\sys} called traffic steering on aggregation routers to encapsulate WAN packets with information needed by backbone routers to do TE without IP routing. 
+{\sys} uses compact data structures and efficient algorithms (\S \ref{sec:scheduling}) to flexibly forward traffic. The following problem is large scale ipv4, ipv6 routes. {\sys} was responsible for routing datacenter prefixes only, which were few enough for all SWAN routers to run BGP and store the datacenter routing tables in the router memory. {\sys} routers had to contend with Internet routing tables and it would be cost prohibitive to make every {\sys} router hold the entire Internet routing table.  Each entry in the raw routing table consists of a prefix and a series of routing information (e.g., next hop, origin, as path, and etc.), so a single 64GB router can only store about 15 million raw routing entries. Hence, {\sys} assigned two roles to routers: (1) aggregation routers that hold full IP routing tables, and (2) backbone routers that act as forwarding only nodes that do not run BGP. We develop a new SDN function in {\sys} called traffic steering on aggregation routers to encapsulate WAN packets with information needed by backbone routers to do TE without IP routing. 
 
 \iffalse
 \begin{figure}
@@ -512,12 +529,13 @@ Inspired by the above parallelization method, we propose a simple and efficient 
 
 \begin{figure}
 \centering
-\subfigure[Logical structure]{
-	\includegraphics[width=\linewidth]{figs/nsdi-forest.png}}
-\label{fig:forest-logical}
+\subfigure[Logical structure]{\label{fig:forest-logical}
+	\includegraphics[width=\linewidth]{figs/nsdi-forest.png}
+ }
+
 %\quad
-\subfigure[Memory structure]{
-	\includegraphics[width=\linewidth]{figs/nsdi-forest-mem.png}}\label{fig:forest-mem}
+\subfigure[Memory structure]{\label{fig:forest-mem}
+	\includegraphics[width=\linewidth]{figs/nsdi-forest-mem.png}}
 \caption{\small Logical and Memory Data Structure: Forest}
 \label{fig:foreststructure}
 \end{figure}
@@ -525,7 +543,7 @@ Inspired by the above parallelization method, we propose a simple and efficient 
 
 %As illustrated in Figure \ref{fig:routetable}, 
 %Generally, each entry in the raw routing table consists of a prefix and a series of routing information (e.g., next hop, origin, as path, and etc.). 
-Currently, some tree-based index structures are used to compress the raw routing table, such as Binary tree\cite{binarytree}, Patricia trie\cite{szpankowski1990patricia}, Radix tree\cite{sklower1991tree}, TreeBitmap\cite{eatherton2004tree}, Poptrie\cite{asai2015poptrie}, and etc. However, the memory of a single {\sys} controller cannot afford the whole compressed index of routing table entries for the entire network, making routing computations require a large number of data exchanges between memory and storage, , e.g., longest matching, full matching, subnet matching, field filtering, and etc. In other words, compressing all routes into one tree will cause the depth of the tree to be too large, which will affect routing index construction and calculation efficiency. Moreover, frequent updates on a large tree also incurs a large computation overhead. Therefore, we need to consider how to efficiently  compress routing entry indexes and ensure the  functions and performance of dynamic addition, deletion, modification, and query.
+Currently, some tree-based index structures are used to compress the raw routing table, such as Binary tree\cite{binarytree}, Patricia trie\cite{szpankowski1990patricia}, Radix tree\cite{sklower1991tree}, TreeBitmap\cite{eatherton2004tree}, Poptrie\cite{asai2015poptrie}, and etc. However, a single {\sys} controller's memory cannot accommodate the entire compressed index of routing table entries for the entire network, which results in routing computations requiring a large number of data exchanges between memory and storage, e.g., longest matching, full matching, subnet matching, field filtering, and etc. In other words, compressing all routes onto a single tree will cause the depth of the tree to be too large, which will affect the efficiency of routing index construction and computations. Moreover, updating a large tree frequently also incurs a significant computation overhead. Therefore, we need to consider how to efficiently compress routing entry indexes while ensuring the functionality and performance of dynamic addition, deletion, modification, and quering.
 
 %{binarytree}: Waldvogel, Marcel, et al. "Scalable high speed IP routing lookups." Proceedings of the ACM SIGCOMM'97 Conference on Applications, technologies, architectures, and protocols for computer communication. 1997.
 
@@ -539,9 +557,13 @@ Currently, some tree-based index structures are used to compress the raw routing
 
 %{Poptrie}: Asai, Hirochika, and Yasuhiro Ohara. "Poptrie: A compressed trie with population count for fast and scalable software IP routing table lookup." ACM SIGCOMM Computer Communication Review 45.4 (2015): 57-70.
 
-In order to improve efficiency, we need to control the scope of route calculation and update as locally as possible. Therefore, we propose a hierarchical forest-based index structure, as illustrated in Fig. \ref{fig:forest-logical}, which decomposes a large tree into multiple flattened subtrees according to the prefix hierarchy, (e.g., $[/16, /20], [/20, /24]$), so that not only the path length of route calculation can be reduced, but also the scope of routing update can be controlled in a small subtree. 
+\para{Index structure.} To improve efficiency, it is crucial to effectively manage the scope of route computations and prioritize localized updates. Therefore, we propose a hierarchical forest-based index structure, as illustrated in Fig. \ref{fig:forest-logical}, which decomposes a large tree into multiple flattened subtrees according to the prefix hierarchy (e.g., $[/16, /20], [/20, /24]$). This structure can reduce the path length of route computations and control the scope of routing updates within a smaller subtree.
+%so that not only the path length of route computations can be reduced, but also the scope of routing update can be controlled in a small subtree. 
 
-However, the space overhead of maintaining the hierarchical forest directly in memory is still non-trivial. We further propose a more compact routing index structure, \emph{ForestBitmap}, to compress each subtree, and the memory overhead can be greatly reduced by mapping each subtree to an entry in memory that is uniquely represented by two integers, i.e., subtree id and the bitmap, as illustrated in Fig. \ref{fig:forest-mem}. In addition, routing computations are mainly implemented by bit operations with high efficiency and routing queries do not need to performed on the tree to avoid deep search and backtracking of excessive trails. This compact and flexible index structure can achieve $O(1)$ online update performance and is easy to expand.
+However, the space required to maintain the hierarchical forest directly in memory remains non-trivial. We further propose a more compact routing index structure to compress every subtree, i.e., \emph{ForestBitmap}. By uniquely representing each subtree with two integers and mapping it to a memory entry, as depicted in Fig. \ref{fig:forest-mem}, we can significantly reduce the memory overhead. 
+%and the memory overhead can be greatly reduced by mapping each subtree to an entry in memory that is uniquely represented by two integers, i.e., subtree id and the bitmap, as illustrated in Fig. \ref{fig:forest-mem}. 
+In addition, routing computations are primarily executed through efficient bit operations, while avoiding extensive search and backtracking on the tree structure, ensuring a better performance.
+This compact and flexible indexing structure can achieve $O(1)$ online update performance and is easily expandable.
 
 \begin{figure}
 	\centering
@@ -551,56 +573,15 @@ However, the space overhead of maintaining the hierarchical forest directly in m
 \end{figure}
 
 
-More specifically, we take the 3-layer subtree in Fig. \ref{fig:treestructure} as an example to illustrate the subtree compression encoding process. Subtree index id is calculated based on the common binary prefix through subnet aggregation, i.e, 0110 0101 1010 1000 0000, and padded the most significant bit with 1 to get the unique subtree id 1464960. Based on the subtree id, we can uniquely locate the subtree where the route resides.  
-Since a 3-layer subtree can store up to seven routes, we use 8-bit bitmap to encode non-null nodes and obtain 238 (i.e., 11101110), where the least significant bit is a reserved bit. Regardless of the pure prefix index, we should consider the more general case of storing and indexing the whole routing tables with attribute information. \emph{ForestBitmap} encodes  the route attribute information  lexicographically and shares them among all routes, whose id is inserted after bitmap based on the sequence of valid bits accordingly. So far, we can compress a 3-layer subtree that contains routing table entries into a Map entry in memory, where the key is the subtree id and the value is an array that contains bitmap and a series of attribute information id(s). 
+\para{Subtree encoding.} More specifically, we take the 3-layer subtree in Fig. \ref{fig:treestructure} as an example to elucidate the process of subtree compression encoding. The subtree index id is calculated based on the common binary prefix obtained through subnet aggregation, which is represented as 0110 0101 1010 1000 0000. The most significant bit is then padded with 1 to obtain the unique subtree id of 1464960. Based on the subtree id, we can uniquely locate the subtree where the route resides.  
+Since a 3-layer subtree can store up to seven routes, we utilize an 8-bit bitmap to encode non-null nodes and obtain 238 (i.e., 11101110), with the least significant bit reserved. 
 
-\emph{Remark.} Taking IPv4 as an example, a 5-layer subtree that stores 31 routing table entries can be represented by a Map entry, so that the IPv4 BGP routing entries with more than 900,000 unique prefixes can be compressed to less than 170,000 Map entries. Compared with the simple tree structures, the memory compression ratio is higher, because of the  compact data structures and aligned integer encoding, and it is more suitable to be placed in the cache to improve the hit rate.
+Regardless of the pure prefix index, it is important to consider the more comprehensive approach of storing and indexing the entire routing tables along with attribute information. \emph{ForestBitmap} encodes the route attribute information lexicographically and shares it among all routes, whose id is inserted after the bitmap based on the sequence of valid bits. Thus, we can compress a 3-layer subtree containing routing table entries into a memory Map entry, where the key of Map is the subtree id and the value is an array that contains bitmap and a series of attribute information id(s). 
 
-\begin{table}[tbp]
-	%	\footnotesize
-	\centering
-	\resizebox{0.48\textwidth}{7mm}{
-		\begin{tabular}{c|c|c}
-			\hline
-			Memory (MB) & Prefix Index & Routing Index  \\ 
-			\hline
-			Baseline (Google RadixTree\cite{googleradixtree}) & 204.37 &	556.48 \\ 
-			\hline
-			{\sys}& 11.55 & 95.31   \\ 
-			\hline
-			Optimization &  17.69$\times$ & 5.93$\times$ \\ 
-			\hline
-		\end{tabular}
-	}
-	\vspace{-0.1in}
-	\caption{\small Memory optimization of \emph{ForestBitmap}}
-	\label{tab:compression-mem}
-\end{table}
+\emph{Remark.} Taking IPv4 as an example, a 5-layer subtree that stores 31 routing table entries can be represented by a Map entry. This allows for the compression of IPv4 BGP routing entries with over 900,000 unique prefixes to less than 170,000 Map entries.
+%, so that the IPv4 BGP routing entries with more than 900,000 unique prefixes can be compressed to less than 170,000 Map entries. 
+Compared to simple tree structures, the memory compression ratio is higher due to the utilization of compact data structures and aligned integer encoding. Additionally, it is more suitable for cache placement, thereby enhancing the hit rate.
 
-% Google Radix Tree: https://code.google.com/archive/p/radixtree/
-
-\begin{table}[tbp]
-	%	\footnotesize
-	\centering
-	\resizebox{0.48\textwidth}{7mm}{
-		\begin{tabular}{c|c|c|c|c|c|c|c}
-			\hline
-			Time (ms) & Index Build & Longest Match & Full Match & Subnet  Match & Delete & Origin\_as Filter & Update  \\ 
-			\hline
-			Baseline (Google RadixTree\cite{googleradixtree}) & 1534 &	4.463 & 8.251 & 758.3 & 122.6 & 75.44 & 1306 \\ 
-			\hline
-			{\sys}& 533.8 & 1.453 & 2.554 & 39.31 & 25.76 & 55.79 & 81.31 \\ 
-			\hline
-			Optimization & 2.87$\times$ & 3.07$\times$ & 3.23$\times$ & 19.29$\times$ & 4.75$\times$ & 1.35$\times$ & 16.06$\times$ \\ 
-			\hline
-		\end{tabular}
-	}
-	\vspace{-0.1in}
-	\caption{\small Routing computation optimization of \emph{ForestBitmap}}
-	\label{tab:compression-time}
-\end{table}
-
-The results on live network data set show that our \emph{ForestBitmap} achieves a compression ratio of 17.69x compared with the baseline for pure prefix index in Table \ref{tab:compression-mem}. For the complete routing index, \emph{ForestBitmap} achieves a compression ratio of 5.83 times in Table \ref{tab:compression-mem} and a computing efficiency improvement of 1.35 times to 19.29 times in Table \ref{tab:compression-time}.
 
 
 \iffalse

@@ -5,11 +5,11 @@
 \begin{figure}
 	\centering
 	\includegraphics[width = 8cm]{figs/architecture/Topology.jpg}
-	\caption{\small Shows the test topology consisting of 8 PoPs with programmable switches highlighted in color, and 8 PoPs without programmable switches marked in white}
+	\caption{\small The network consists of 8 PoPs with programmable switches highlighted in color, and 8 PoPs without programmable switches marked in white, which are connected by a backbone network of 40 links.}
 	\label{fig:topo}
 \end{figure}
 
-As shown in Figure \ref{fig:topo}, the test input network topology includes 860 {\egresses}, among which there are 32 Transit {\egresses}, comprising 16 PoPs in total. 8 of these PoPs have programmable devices capable of detecting flows, while the other 8 PoPs act solely as transit PoPs, utilizing their backbone network links. The total number of backbone network links is 40. The amount of flows in the test input is approximately 2 million per time slot and the flows are all from real business traffic of 1 week (from May 22, 2023 to May 28, 2023). Performance-aware flows are marked according to the application service class, with the number being roughly 4\% of the total number of flows. The algorithm runs on a single server with 64GB of memory and 32 CPU cores.
+We evaluate the result through the topology, as shown in Figure \ref{fig:topo}, includes 860 {\egresses}, among which there are 32 Transit {\egresses}, comprising 16 PoPs in total. 8 of these PoPs have programmable devices capable of detecting flows, while the other 8 PoPs act solely as transit PoPs, utilizing their backbone network links. The total number of backbone network links is 40. The amount of flows in the test input is approximately 2 million per time slot and the flows are all from real business traffic of 1 week (from May 22, 2023 to May 28, 2023). Performance-aware flows are marked according to the application service class, with the number being roughly 4\% of the total number of flows. The algorithm runs on a single server with 64GB of memory and 32 CPU cores.
 
 
 % performance-aware flow identification and characteristics. 
@@ -19,9 +19,9 @@ Considering the risk in practical deployments, we set the maximum percentage of 
 
 % 其他论文的用词
 % 冲顶 ！= burst
-We compare the difference in scheduling results between {\sys} and existing network scheduling algorithm in terms of cost optimization and performace optimization. Existing approaches cannot be applied in our scenarios because none of the current algorithms that focus on cost and performance optimization scheduling take the capacity constraints of the backbone network as a limitation. We select the existing network controller’s traffic scheduling algorithm as the baseline algorithm. The baseline approach categorizes flows directed towards specific predetermined ASes as performance-aware flows. This baseline method switch reroutes the entire traffic trunks associated with the specified ASes from one {\egress} to another. However, this routing granularity is relatively coarse and this method does not optimize the final cost. We will show that {\sys} employs application service classes and destination ISP prefixes to identify flows, thereby optimizing final cost and performance-aware routing to better align with the specific performance requirements of clients.
+We compare the difference in scheduling results between {\sys} and the existing network scheduling algorithm in terms of cost optimization and performance optimization. Existing approaches select the optimial egress port based on the monitoring results.   This baseline method switch reroutes the entire traffic trunks associated with the specified ASes from one {\egress} to another. However, the routing granularity is coarse \todo{dest AS and thus the baseline does not optimize the final cost.} We will show that {\sys} employs application service classes and destination ISP prefixes to identify flows, thereby optimizing final cost and performance-aware routing to better align with the specific performance requirements of clients.
 
-To verify the effectiveness of the proposed algorithms. We first conduct tests on our algorithm's performance in cost optimization and performance optimization under various hyperparameters. Then we evaluate the algorithm's runtime under different number of threads in large-scale tests to show that it has good scalability. Finally, we discuss problems that may be encountered in the application of the algorithm.
+To verify the effectiveness of the proposed algorithms. We first conduct tests on our algorithm's performance in cost optimization and performance optimization under various hyperparameters. Then we evaluate the algorithm's runtime under different numbers of threads in large-scale tests to show that it has good scalability. Finally, we discuss problems that may be encountered in applying the algorithm.
 
 % Nowadays, cloud providers consistently implement performance-aware routing at cloud's edge. The baseline approach categorizes flows directed towards specific predetermined ASes as performance-sensitive flows. This baseline method switch reroutes the entire traffic trunks associated with the specified ASes from one {\egress} to another. However, this routing granularity is relatively coarse.  Conversely, our proposed approach employs source application types and destination prefixes to identify flows, thereby optimizing performance-aware routing to better align with the specific performance requirements of clients.
 
@@ -32,7 +32,7 @@ To verify the effectiveness of the proposed algorithms. We first conduct tests o
 
 \subsection{Cost Optimization} \label{Cost Optimization}
 
-We first conducted offline tests for 1 to 7 days with hyperparameters such as a burst threshold of 90\% and a flow filter threshold of 0.1Mb. The test results are shown in Table \ref{tab:7days}, indicating that {\sys} exhibits relatively stable cost optimization compared to the existing network controller's traffic scheduling scheme, with an optimization ratio of approximately 36\%. Furthermore, as the number of time slots increases, {\sys} achieves greater cost optimization, suggesting that our algorithm possesses a certain level of stability. Given that the effect of cost optimisation is almost independent of the number of test slots, the number of test slots is set to the number of slots for 1 day, i.e. 288 slots, for all subsequent experimental tests.
+We first conduct offline tests for 1 to 7 days with hyperparameters such as a burst threshold of 90\% and a flow filter threshold of 0.1Mb. The test results are shown in Table \ref{tab:7days}, indicating that {\sys} exhibits relatively stable cost optimization compared to the existing network controller's traffic scheduling scheme, with an optimization ratio of approximately 36\%. Furthermore, as the number of time slots increases, {\sys} achieves greater cost optimization, suggesting that our algorithm possesses a certain level of stability. Given that the effect of cost optimization is almost independent of the number of test slots, the number of test slots is set to the number of slots for 1 day, i.e. 288 slots, for all subsequent experimental tests.
 
 \begin{table}[tbp]
 %	\footnotesize
@@ -55,7 +55,7 @@ We first conducted offline tests for 1 to 7 days with hyperparameters such as a 
 	\label{tab:7days}
 \end{table}
 
-We compared the cost optimization effects of {\sys} under different hyperparameters settings to the existing network scheduling algorithm, while keeping other experimental settings constant. Figure \ref{fig:costTestpara1} illustrates the relationship between the flow filter threshold and the percentage of cost savings under the same burst threshold. It shows that with a fixed burst threshold, the percentage of cost savings increases as the flow filter threshold decreases. However, when the flow filter threshold becomes sufficiently small (e.g., 0.1Mb), further decreasing the flow filter threshold does not significantly increase the final cost. It indicates that higher burst thresholds often result in a lower final cost. This is because the total bandwidth of the remaining flows does not decrease significantly as FT continues to decrease, thereby not yielding a substantial enhancement in cost optimization.
+We compared the cost optimization effects of {\sys} under different hyperparameter settings to the existing network scheduling algorithm while keeping other experimental settings constant. Figure \ref{fig:costTestpara1} illustrates the relationship between the flow filter threshold and the percentage of cost savings under the same burst threshold. It shows that with a fixed burst threshold, the percentage of cost savings increases as the flow filter threshold decreases. However, when the flow filter threshold becomes sufficiently small (e.g., 0.1Mb), further decreasing the flow filter threshold does not significantly increase the final cost. It indicates that higher burst thresholds often result in a lower final cost. This is because the total bandwidth of the remaining flows does not decrease significantly as FT continues to decrease, thereby not yielding a substantial enhancement in cost optimization.
 
 \begin{figure}
 	\centering
@@ -75,6 +75,7 @@ We compared the cost optimization effects of {\sys} under different hyperparamet
 
 \subsection{Performance Optimization}
 Then, we test the performance optimization effect of {\sys} on performance-aware flows. We choose the delay of the flow to the {\egress} as the performance metric, which contains the {\egress} delay, and the backbone link delay. We compare the differences in latency performance optimization between the {\sys} scheduling algorithm and the existing network controller's scheduling algorithm for performance-aware flows. Our testbed settings are the same as mentioned earlier. We test for 288 time slots, with a burst threshold of 90\% and a flow filter threshold of 0.1Mb. Figure \ref{fig:performanceTestAbs} illustrates the variation of average latency for performance-aware flows over time slots under the two traffic scheduling schemes. {\sys}, compared to the existing network's traffic scheduling algorithm, reduces the average latency for performance-aware flows from 44.2ms to 41.7ms, achieving an absolute average decrease of about 2.5ms. We test the percentage of performance-aware flows optimized by {\sys} to the total performance-aware flows under each time slot. As shown in Figure \ref{fig:performanceTestPrecent}, in comparison to the existing network controller's scheduling algorithm, {\sys} can reduce the latency of approximately 67\% performance-aware flows.
+We achieve the similar relusts by using different parameters $FT=\{0.01, 0.1,0.5,1,5\}$Mbps and $BT=\{100\%, 90\%, 80\%\}$. This is due to three main reasons: Firstly, {\sys} does not filter the performance-aware flows, which means the flow filter threshold is unaffected by the performance. Secondly, our algorithm prioritizes optimizing the performance for performance-aware flows by a heuristic strategy; Thirdly, the number of performance-aware flows is relatively small and constitutes a small portion of the total flow size. So almost every performance-aware flow can be placed to the optimal {\egress}.
 
 \begin{figure}
 	\centering
@@ -91,7 +92,7 @@ Then, we test the performance optimization effect of {\sys} on performance-aware
 \end{figure}
 
 
-The results are shown in Table \ref{fig:performanceTestHyperparameters}. It shows that different hyperparameters doesn't significantly affect the performance optimization for performance-aware flows. This is due to three main reasons: Firstly, {\sys} does not filter the perfromance-aware flows, which means flow filter threshold is unaffected to the performance. Secondly, our algorithm prioritizes optimizing the performance for performance-aware flows by a heuristic strategy; Thirdly, the number of performance-aware flows is relatively small and constitutes a small portion of the total flow size. So almost every performance-aware flow can be placed to the optimal {\egress}.
+
 
 
 \iffalse
@@ -101,7 +102,7 @@ The results are shown in Table \ref{fig:performanceTestHyperparameters}. It show
 	\caption{\small Impact of choosing different hyperparameters on performance optimization}
 	\label{fig:performanceTestHyperparameters}
 \end{figure}
-\fi
+
 
 \begin{table}[tbp]
 	\footnotesize
@@ -128,9 +129,13 @@ The results are shown in Table \ref{fig:performanceTestHyperparameters}. It show
 	\label{fig:performanceTestHyperparameters}
 \end{table}
 
+The results are shown in Table \ref{fig:performanceTestHyperparameters}. It shows that different hyperparameters do not significantly affect the performance optimization for performance-aware flows. This is due to three main reasons: Firstly, {\sys} does not filter the performance-aware flows, which means the flow filter threshold is unaffected by the performance. Secondly, our algorithm prioritizes optimizing the performance for performance-aware flows by a heuristic strategy; Thirdly, the number of performance-aware flows is relatively small and constitutes a small portion of the total flow size. So almost every performance-aware flow can be placed to the optimal {\egress}.
+
+\fi
+
 % 我们的算法在更大规模下是不是还适用
 \subsection{Scalability}
-Since {\sys}'s objective is to perform large-scale traffic scheduling, computational efficiency during online scheduling is of paramount importance. Following the same testbed setup as described earlier, we test the average runtime of the algorithm per time slot under different hyperparameters for the serial version. Table \ref{fig:runtimeHyper} shows that the burst threshold has almost no impact on the average runtime, as the average runtime is primarily determined by the large number of flows awaiting scheduling, and changing the burst threshold doesn't affect the number of flows. On the other hand, changes in the flow filter threshold significantly impact the average runtime of the algorithm. As the flow selection filter increases, fewer flows participate in the optimization scheduling, resulting in shorter algorithm runtime.
+Since {\sys}'s objective is to perform large-scale traffic scheduling, computational efficiency during online scheduling is of paramount importance. Following the same testbed setup as described earlier, we test the average runtime of the algorithm per time slot under different hyperparameters for the serial version. Table \ref{fig:runtimeHyper} shows that the burst threshold has almost no impact on the average runtime, as the average runtime is primarily determined by the large number of flows awaiting scheduling. On the other hand, changes in the flow filter threshold significantly impact the average runtime of the algorithm. As the flow filter threshold increases, fewer flows participate in the optimization schedule, resulting in shorter algorithm runtime.
 
 \begin{table}[tbp]
 %	\footnotesize
@@ -155,11 +160,12 @@ Since {\sys}'s objective is to perform large-scale traffic scheduling, computati
  \end{tabular}
  }    
     \vspace{-0.1in}
-	\caption{\small Impact of different hyperparameters on algorithm runtime under single threading(ms)}
+	\caption{\small The impact of varying hyperparameters on the algorithm's runtime under a single thread (in milliseconds), with "BW PCT." representing the percentage of remaining bandwidth after filtering and "Number PCT." denoting the percentage of the number of flows remaining after filtering.}
 	\label{fig:runtimeHyper}
 \end{table}
 
-Next, we scale up the number of flows by triplicating the Transit flows, bringing the flow number to around 5 million, and reduce the bandwidth of these flows to one-third of the original to keep the total bandwidth same. Besides, no flows are filtered, maintaining a flow count of around 5 million for scheduling, while other experimental settings remains consistent. We compare the average runtime of the algorithm per time slot under different number of threads. As shown in Figure \ref{fig:runtimeComp}, under the parallel 32-threaded mode, the algorithm's average runtime is approximately 80\% shorter than the serial mode. This indicates that if filtering is applied to flows with a flow filter threshold of 0.1Mb, our algorithm can support the scheduling of around 500 million flows within approximately 10 seconds with 32 threads.
+
+Next, we scale up the number of flows by triplicating the flows, bringing the flow number to around 5 million. The bandwidths of these flows are reduced to one-third of the original to keep the total bandwidth the same. Besides, no flows are filtered, maintaining a flow count of around 5 million for scheduling, while other experimental settings remain consistent. We compare the average runtime of the algorithm per time slot under different numbers of threads. As shown in Figure \ref{fig:runtimeComp}, under the parallel 32-threaded mode, the algorithm's average runtime is approximately 80\% shorter than the serial mode. This indicates that if filtering is applied to flows with a flow filter threshold of 0.1Mb, our algorithm can support the scheduling of around 500 million flows within approximately 10 seconds with 32 threads.
 
 % \begin{table}[tbp]
 % %	\footnotesize
@@ -189,8 +195,53 @@ Next, we scale up the number of flows by triplicating the Transit flows, bringin
 \end{figure}
 
 
+\subsection{Routing Table Compression}
+\begin{table}[tbp]
+	%	\footnotesize
+	\centering
+	\resizebox{0.48\textwidth}{7mm}{
+		\begin{tabular}{c|c|c}
+			\hline
+			Memory (MB) & Prefix Index & Routing Index  \\ 
+			\hline
+			Baseline (Google RadixTree\cite{googleradixtree}) & 204.37 &	556.48 \\ 
+			\hline
+			{\sys}& 11.55 & 95.31   \\ 
+			\hline
+			Optimization &  17.69$\times$ & 5.93$\times$ \\ 
+			\hline
+		\end{tabular}
+	}
+	\vspace{-0.1in}
+	\caption{\small Memory optimization of \emph{ForestBitmap}}
+	\label{tab:compression-mem}
+\end{table}
 
-% \subsection{Hyperparameter Selection}
+% Google Radix Tree: https://code.google.com/archive/p/radixtree/
+
+\begin{table}[tbp]
+	%	\footnotesize
+	\centering
+	\resizebox{0.48\textwidth}{7mm}{
+		\begin{tabular}{c|c|c|c|c|c|c|c}
+			\hline
+			Time (ms) & Index Build & Longest Match & Full Match & Subnet  Match & Delete & Origin\_as Filter & Update  \\ 
+			\hline
+			Baseline (Google RadixTree\cite{googleradixtree}) & 1534 &	4.463 & 8.251 & 758.3 & 122.6 & 75.44 & 1306 \\ 
+			\hline
+			{\sys}& 533.8 & 1.453 & 2.554 & 39.31 & 25.76 & 55.79 & 81.31 \\ 
+			\hline
+			Optimization & 2.87$\times$ & 3.07$\times$ & 3.23$\times$ & 19.29$\times$ & 4.75$\times$ & 1.35$\times$ & 16.06$\times$ \\ 
+			\hline
+		\end{tabular}
+	}
+	\vspace{-0.1in}
+	\caption{\small Routing computation optimization of \emph{ForestBitmap}}
+	\label{tab:compression-time}
+\end{table}
+
+The results obtained from the live network data set demonstrate that our \emph{ForestBitmap} achieves a compression ratio of 17.69 times when compared to the baseline for pure prefix index, as presented in Table \ref{tab:compression-mem}. For the complete routing table index, \emph{ForestBitmap} achieves a compression ratio of 5.83 times in Table \ref{tab:compression-mem} and a computing efficiency improvement from 1.35 to 19.29 times in Table \ref{tab:compression-time}.
+
 
 
 
@@ -198,7 +249,7 @@ Next, we scale up the number of flows by triplicating the Transit flows, bringin
 
 
 \subsection{Discussion}
-\para{How to set the hyperparameters?} Based on the results of the tests mentioned above, we analyzed the impact of the two hyperparameters, the burst threshold $BT$ and the flow filter threshold $FT$, on the final optimization results. Cost optimization is influenced by both hyperparameters, while performance optimization is unaffected by them, and the algorithm's average runtime is influenced solely by the flow filter threshold. In order to maintain favorable cost optimization results and mitigate the risks associated with the upper bound of {\egress} capacity, we ultimately chose to set the burst threshold at 90\%. The choice of the flow filter threshold affects both optimizations simultaneously. Figure \ref{fig:hyperChoose} shows the percentage of cost savings and algorithm's average runtime under different flow filter thresholds. It can be told that as the flow filter threshold decreases from 5Mb to 0.1Mb, the final cost significantly reduces, while the algorithm's average runtime remains relatively stable. However, when the flow filter threshold is further reduced to 0.01Mb, the percentage of cost savings doesn't exhibit significant growth, while the algorithm's average runtime increases notably. Consequently, we settled on a flow filter threshold of 0.1Mb.
+\para{How to set the hyperparameters?} Based on the results of the tests mentioned above, we analyzed the impact of the two hyperparameters, the burst threshold $BT$ and the flow filter threshold $FT$, on the final optimization results. Cost optimization is influenced by both hyperparameters, while performance optimization is unaffected by them, and the algorithm's average runtime is influenced solely by the flow filter threshold. To maintain favorable cost optimization results and mitigate the risks associated with the upper bound of {\egress} capacity, we ultimately set the burst threshold to 90\%. Figure \ref{fig:hyperChoose} shows the percentage of cost savings and the algorithm's average runtime under different flow filter thresholds. It can be said that as the flow filter threshold decreases from 5Mb to 0.1Mb, the final cost significantly reduces, while the algorithm's average runtime remains relatively stable. However, when the flow filter threshold is further reduced to 0.01Mb, the percentage of cost savings doesn't exhibit significant growth, while the algorithm's average runtime increases notably. Consequently, we settled on a flow filter threshold of 0.1Mb.
 
 \begin{figure}
 	\centering
@@ -207,9 +258,9 @@ Next, we scale up the number of flows by triplicating the Transit flows, bringin
 	\label{fig:hyperChoose}
 \end{figure}
 
-\para{What if the number of performance-aware flows is large?} When performance-aware flows dominate the bandwidth of the majority of flows in the network, {\sys} can still integrate cost and performance objectives for traffic scheduling. The reason is that performance-sensitive flows often tend to be scheduled within this PoP for better performance. Scheduling across PoPs offen impairs performance metrics such as delay and packet loss. However, the core of cost optimization lies in making full use of the suggested bandwidth of the backbone given by the solver, i.e. the virtual link capacity between PoPs. Therefore, if non-performance-aware flows are able to fully utilize the capacity of these virtual links, {\sys} can still well optimize the final cost. If the total available capacity of each intra-PoP {\egress} is greater than the total bandwidth of the performance-aware flows within the PoP, the perfomance of flows can still be optimized.
+\para{What if the number of performance-aware flows is large?} When performance-aware flows dominate the bandwidth of the majority of flows in the network, {\sys} can still integrate cost and performance objectives for traffic scheduling. The reason is that performance-aware flows often tend to be scheduled within their original PoPs for better performance. Scheduling across PoPs may impair performance metrics such as delay and packet loss. However, the core of cost optimization lies in making full use of the suggested bandwidth of the virtual link capacity between PoPs given by the solver. Therefore, if non-performance-aware flows can fully utilize the capacity of these virtual links, the final cost can still be optimized by {\sys}. If the total available capacity of each intra-PoP {\egress} is greater than the total bandwidth of the performance-aware flows within the PoP, the performance of flows can still be optimized.
 
-\para{What if the virtual link capacity is not utilized during heuristic scheduling?} We designed another simple heuristic scheduling algorithm to demonstrate the necessity of utilizing virtual link capacity. This algorithm schedules flows directly to a feasible {\egress} after arranging them in descending order of bandwidth. We evaluate the performance of this simple algorithm and {\sys} in terms of cost optimization. As shown in Figure \ref{fig:backboneEffect}, this heuristic algorithm can only optimize approximately 6\% of the cost, which is significantly lower than the optimization achieved by {\sys}. As analyzed in Section \ref{Solving Optimization Quickly}, the insufficient capacity of the backbone network results in the inability to route flows out of certain PoPs, causing a rapid growth in the {\egress} $p_i$ of these PoPs.
+\para{What if the virtual link capacity is not utilized during heuristic scheduling?} We designed another simple heuristic scheduling algorithm to demonstrate the necessity of utilizing virtual link capacity. This algorithm schedules flows directly to a feasible {\egress} after arranging them in descending order of bandwidth. We evaluate the performance of this simple algorithm and {\sys} in terms of cost optimization. As shown in Figure \ref{fig:backboneEffect}, this heuristic algorithm can only optimize approximately 6\% of the cost, which is significantly lower than the optimization achieved by {\sys}. As analyzed in Section \ref{Solving Optimization Quickly}, the insufficient capacity of the backbone network results in the inability to route flows out of certain PoPs, causing rapid growth in the {\egress} $p_i$ of these PoPs.
 
 \begin{figure}
 	\centering
@@ -218,7 +269,7 @@ Next, we scale up the number of flows by triplicating the Transit flows, bringin
 	\label{fig:backboneEffect}
 \end{figure}
 
-% \para{What if the predicted charged bandwidth per {\egress} given by the overall level optimization is not accurate?} Since the {\egress} charge bandwidth prediction $p_i$ given by the overrall level optimization will act as a constraint when scheduling online, if the sum of the $p_i$ of all {\egresses} within a PoP is too low, 5\% of the burst time slots will be quickly exhausted. In this case, the actual final cost may be much higher than the overrall level prediction.
+% \para{What if the predicted charged bandwidth per {\egress} given by the overall level optimization is not accurate?} Since the {\egress} charge bandwidth prediction $p_i$ given by the overall level optimization will act as a constraint when scheduling online, if the sum of the $p_i$ of all {\egresses} within a PoP is too low, 5\% of the burst time slots will be quickly exhausted. In this case, the actual final cost may be much higher than the overall level prediction.
 
 
 % \subsection{Robustness Analyze}
